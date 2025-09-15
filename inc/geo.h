@@ -2,8 +2,9 @@
 #define GEO_H
 
 #include <cmath>
+#include <vector>
 
-bool is_doubleZero(double num1, double num2 = NAN, double num3 = NAN)
+bool is_doubleZero(double num1 = NAN, double num2 = NAN, double num3 = NAN)
 {
     if (std::isnan(num2) && std::isnan(num3)) return std::abs(num1) < 0.001;
 
@@ -37,7 +38,9 @@ struct Point
         double ry = std::abs(p2.y_ - p1.y_);
         double rz = std::abs(p2.z_ - p1.z_);
 
-        return ((r1x + r2x) == rx) && ((r1y + r2y) == ry) && ((r1z + r2z )== rz);
+        if (std::isnan(rx) && std::isnan(ry) && std::isnan(rz)) return false;
+
+        return ((r1x + r2x) == rx) && ((r1y + r2y) == ry) && ((r1z + r2z) == rz);
     }
 
     bool is_equalTo(Point& anotherPoint)
@@ -223,20 +226,69 @@ public:
         // find intersection points (triangles sides lines intersect intersectLine of triangle  
         // planes)
 
+        
         // this triangle
+        // точки, находящиеся на пересечеии каждой линии треуголька с линией пересечения плоскостей 
+        // треугольников
         Point ip1 = l1_.intersect(intersectLine);
         Point ip2 = l2_.intersect(intersectLine);
         Point ip3 = l3_.intersect(intersectLine);
+        // Проверяем, что точки также лежат на соответствующих им сторонам треугольника
+        std::vector<Point&> riptt; // real intersection points of this triangle
+        if (ip1.is_among(p1_, p2_)) riptt.push_back(ip1);
+        if (ip2.is_among(p2_, p3_)) riptt.push_back(ip2);
+        if (ip3.is_among(p3_, p1_)) riptt.push_back(ip3);
 
         // another triangle
+        // Поступаем аналогично и со вторым треугольником
         Point ip4 = anotherTriangle.l1_.intersect(intersectLine);
         Point ip5 = anotherTriangle.l2_.intersect(intersectLine);
         Point ip6 = anotherTriangle.l3_.intersect(intersectLine);
+        std::vector<Point&> ripat; // real intersection points of another triangle
+        if (ip4.is_among(anotherTriangle.p1_, anotherTriangle.p2_)) ripat.push_back(ip4);
+        if (ip5.is_among(anotherTriangle.p2_, anotherTriangle.p3_)) ripat.push_back(ip5);
+        if (ip6.is_among(anotherTriangle.p3_, anotherTriangle.p1_)) ripat.push_back(ip6);
+
+        // Если таких точек не оказалось, то есть плоскости треугольников пересекаются, но сами 
+        // треугольники оказались далеки от линии пересечения
+        if (riptt.empty() || ripat.empty()) return false;
+
+        // Если по одной точке у треугольников на линии пересечения плоскостей треугольников,
+        // то для их пересечения необходимо совпадения двух этих точек.
+        if (riptt.size() == 1 && ripat.size() == 1)
+        {
+            if (riptt.at(0).is_equalTo(ripat.at(0))) return true;
+
+            return false;
+        }
+        
+        // Нашлись две такие точки хотя бы у одного треугольника
+        if (riptt.size() == 2)
+        {
+            Point& ip1_riptt = riptt.at(0);
+            Point& ip2_riptt = riptt.at(0);
+
+            // смотрим, какая то точка второго треугольника лежит в отрезке первого треугольника
+            for (Point& ip : ripat)
+            {
+                if (ip.is_among(ip1_riptt, ip2_riptt)) return true;
+            }
+
+            // и наоборот
+            if (ripat.size() == 2)
+            {
+                Point& ip1_ripat = ripat.at(0);
+                Point& ip2_ripat = ripat.at(1);
+
+                for (Point& ip : riptt)
+                {
+                    if (ip.is_among(ip1_ripat, ip2_ripat)) return true;
+                }
+            }
+            return false;
+        }
 
     }
-
-
-
 };
 
 
