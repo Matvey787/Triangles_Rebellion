@@ -6,7 +6,10 @@
 # g++ -g -O2 -fno-omit-frame-pointer your_program.cpp -o your_program
 # -DCMAKE_BUILD_TYPE=RelWithDebInfo
 
+# Запуск Google tests
 # ./build/geo_tests
+
+# Запуск Google tests с фильтром
 # ./build/geo_tests --gtest_filter="...*"
 
 
