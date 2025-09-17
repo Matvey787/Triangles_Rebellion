@@ -1,19 +1,11 @@
 #ifndef GEO_H
 #define GEO_H
 
+#include "double.h"
+
 #include <cmath>
 #include <vector>
-
-bool is_doubleZero(double num1 = NAN, double num2 = NAN, double num3 = NAN)
-{
-    if (std::isnan(num2) && std::isnan(num3)) return std::abs(num1) < 0.001;
-
-    if (std::isnan(num2)) return std::abs(num1)  < 0.001 && std::abs(num3) < 0.001;;
-
-    if (std::isnan(num3)) return std::abs(num1) < 0.001 && std::abs(num2) < 0.001;
-
-    return std::abs(num1) < 0.001 && std::abs(num2) < 0.001 && std::abs(num3) < 0.001;
-}
+#include <ostream>
 
 struct Point
 {
@@ -59,6 +51,13 @@ struct GeoVector
     double yProj_;
     double zProj_;
 
+    GeoVector(Point& p1, Point& p2)
+    {
+        xProj_ = p2.x_ - p1.x_;
+        yProj_ = p2.y_ - p1.y_;
+        zProj_ = p2.z_ - p1.z_;
+    }
+
     GeoVector(double xProjection, double yProjection, double zProjection) : 
         xProj_(xProjection),
         yProj_(yProjection),
@@ -88,6 +87,19 @@ struct GeoVector
             xProj_ * anotherVector.yProj_ - yProj_ * anotherVector.xProj_
         );
     }
+
+    double multiply_scalar_by(const GeoVector& anotherVector)
+    {
+        return xProj_ * anotherVector.xProj_ +
+               yProj_ * anotherVector.yProj_ +
+               zProj_ * anotherVector.zProj_;
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const GeoVector& vec)
+    {
+        os << "GeoVector(" << vec.xProj_ << ", " << vec.yProj_ << ", " << vec.zProj_ << ")";
+        return os;
+    }
 };
 
 class Line
@@ -103,39 +115,11 @@ public:
     Line(Point& point1, Point& point2) :
         p_(point1),
         basis_(point2.x_ - point1.x_, point2.y_ - point1.y_, point2.z_ - point1.z_) {}
+    Line(GeoVector& basis, Point&& point) : p_(point), basis_(basis) {}
 
-    Point intersect(Line& anotherLine)
-    {
-        if (this->is_parallelTo(anotherLine)) return Point(NAN, NAN, NAN);
+    Point intersect(Line& anotherLine);
 
-        double x1 = p_.x_;
-        double y1 = p_.y_;
-        double z1 = p_.z_;
-        double xb1 = basis_.xProj_;
-        double yb1 = basis_.yProj_;
-        double zb1 = basis_.zProj_;
-
-        double x2 = anotherLine.p_.x_;
-        double y2 = anotherLine.p_.y_;
-        double xb2 = anotherLine.basis_.xProj_;
-        double yb2 = anotherLine.basis_.yProj_;
-
-        double k1_nominator = (x1 - x2) / xb2 - (y1 - y2) / yb2;
-        double k1_denominator = (yb1 / yb2 - xb1 / xb2);
-        double k1 = k1_nominator / k1_denominator;
-
-        // intersection point
-        double ipx = x1 + k1 * xb1;
-        double ipy = y1 + k1 * yb1;
-        double ipz = z1 + k1 * zb1;
-
-        return Point(ipx, ipy, ipz);
-    }
-
-    bool is_parallelTo(Line& anotherLine)
-    {
-        return basis_.is_parallel(anotherLine.basis_);
-    }
+    bool is_parallelTo(Line& anotherLine);
 
     GeoVector get_basis()
     {
@@ -154,49 +138,14 @@ class Triangle
     Line l2_;
     Line l3_;
     
-    Line findIntersectLine(Triangle& anotherTriangle)
-    {
-        // two lines basises form one plane basis 
-        // try to find a, b, c, d for general equation ax + by + cz + d = 0
+    Line findIntersectLine(Triangle& anotherTriangle);
 
-        GeoVector l1b = l1_.get_basis();
-        GeoVector l2b = l2_.get_basis();
-        GeoVector normal1 = l1b.multiply_vectorially_by(l2b);
-        double a1 = normal1.xProj_;
-        double b1 = normal1.yProj_;
-        double c1 = normal1.zProj_;
-        double d1 = - (a1 * p1_.x_ + b1 * p1_.y_ + c1 * p1_.z_);
+    bool intersect3D(Triangle& anotherTriangle);
 
-
-        GeoVector anotherTriangle_l1b = anotherTriangle.l1_.get_basis();
-        GeoVector anotherTriangle_l2b = anotherTriangle.l2_.get_basis();
-        GeoVector normal2 = anotherTriangle_l1b.multiply_vectorially_by(anotherTriangle_l2b);
-        double a2 = normal2.xProj_;
-        double b2 = normal2.yProj_;
-        double c2 = normal2.zProj_;
-        double d2 = - (a2 * anotherTriangle.p1_.x_ + b2 * anotherTriangle.p1_.y_ + c2 * anotherTriangle.p1_.z_);
-
-        // look for two points of intersection of planes
-        // get this points from system a1*x + b1*y + c1*z + d1 = 0; 
-        //                             a2*x + b2*y + c2*z + d2 = 0;
-
-        // let the x = 0 of the first point
-        Point ip1;
-        ip1.x_ = 0;
-        ip1.y_ = (c1 / c2 * d2 - d1) / (b1 - c1 / c2 * b2);
-        ip1.z_ = -1 * (d2 + b2 * ip1.y_) / c2;
-
-        // let the x = 1 of the second point
-        Point ip2;
-        ip2.x_ = 1;
-        ip2.y_ = (c1 / c2 * (d2 + a2) - d1 - a1) / (b1 - c1 / c2 * b2);
-        ip2.z_ = -1 * (d2 + a2 + b2 * ip1.y_) / c2;
-
-        return Line(ip1, ip2);
-
-    }
+    bool intersect2D(Triangle& anotherTriangle);
 
 public:
+    Triangle() : p1_(), p2_(), p3_(), l1_(), l2_(), l3_() {}
     Triangle(Point& point1, Point& point2, Point& point3) : 
         p1_(point1), 
         p2_(point2), 
@@ -204,91 +153,14 @@ public:
         l1_(p1_, p2_),
         l2_(p2_, p3_),
         l3_(p3_, p1_) {}
+        
 
     // TODO cocnvert from lines to points,  back
     // Triangle(Line& line1, Line& line2, Line& line3) : l1_(line1), l2_(line2), l3_(line3) {}
 
-    bool is_parallelTo(Triangle& anotherTriangle)
-    {
-        if (!l1_.is_parallelTo(anotherTriangle.l1_)) return false;
-        if (!l2_.is_parallelTo(anotherTriangle.l2_)) return false;
-        if (!l3_.is_parallelTo(anotherTriangle.l3_)) return false;
-        return true;
-    }
+    bool is_parallelTo(Triangle& anotherTriangle);
 
-    bool is_intersect(Triangle& anotherTriangle)
-    {
-        // FIXME it could be not false
-        if (this->is_parallelTo(anotherTriangle)) return false;
-
-        Line intersectLine = findIntersectLine(anotherTriangle);
-
-        // find intersection points (triangles sides lines intersect intersectLine of triangle  
-        // planes)
-
-        
-        // this triangle
-        // точки, находящиеся на пересечеии каждой линии треуголька с линией пересечения плоскостей 
-        // треугольников
-        Point ip1 = l1_.intersect(intersectLine);
-        Point ip2 = l2_.intersect(intersectLine);
-        Point ip3 = l3_.intersect(intersectLine);
-        // Проверяем, что точки также лежат на соответствующих им сторонам треугольника
-        std::vector<Point&> riptt; // real intersection points of this triangle
-        if (ip1.is_among(p1_, p2_)) riptt.push_back(ip1);
-        if (ip2.is_among(p2_, p3_)) riptt.push_back(ip2);
-        if (ip3.is_among(p3_, p1_)) riptt.push_back(ip3);
-
-        // another triangle
-        // Поступаем аналогично и со вторым треугольником
-        Point ip4 = anotherTriangle.l1_.intersect(intersectLine);
-        Point ip5 = anotherTriangle.l2_.intersect(intersectLine);
-        Point ip6 = anotherTriangle.l3_.intersect(intersectLine);
-        std::vector<Point&> ripat; // real intersection points of another triangle
-        if (ip4.is_among(anotherTriangle.p1_, anotherTriangle.p2_)) ripat.push_back(ip4);
-        if (ip5.is_among(anotherTriangle.p2_, anotherTriangle.p3_)) ripat.push_back(ip5);
-        if (ip6.is_among(anotherTriangle.p3_, anotherTriangle.p1_)) ripat.push_back(ip6);
-
-        // Если таких точек не оказалось, то есть плоскости треугольников пересекаются, но сами 
-        // треугольники оказались далеки от линии пересечения
-        if (riptt.empty() || ripat.empty()) return false;
-
-        // Если по одной точке у треугольников на линии пересечения плоскостей треугольников,
-        // то для их пересечения необходимо совпадения двух этих точек.
-        if (riptt.size() == 1 && ripat.size() == 1)
-        {
-            if (riptt.at(0).is_equalTo(ripat.at(0))) return true;
-
-            return false;
-        }
-        
-        // Нашлись две такие точки хотя бы у одного треугольника
-        if (riptt.size() == 2)
-        {
-            Point& ip1_riptt = riptt.at(0);
-            Point& ip2_riptt = riptt.at(0);
-
-            // смотрим, какая то точка второго треугольника лежит в отрезке первого треугольника
-            for (Point& ip : ripat)
-            {
-                if (ip.is_among(ip1_riptt, ip2_riptt)) return true;
-            }
-
-            // и наоборот
-            if (ripat.size() == 2)
-            {
-                Point& ip1_ripat = ripat.at(0);
-                Point& ip2_ripat = ripat.at(1);
-
-                for (Point& ip : riptt)
-                {
-                    if (ip.is_among(ip1_ripat, ip2_ripat)) return true;
-                }
-            }
-            return false;
-        }
-
-    }
+    bool is_intersect(Triangle& anotherTriangle);
 };
 
 
