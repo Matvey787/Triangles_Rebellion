@@ -5,14 +5,30 @@ from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 def read_triangles(filename):
     triangles = []
     with open(filename, 'r') as f:
-        n = int(f.readline().strip())
-        for _ in range(n):
-            points = []
-            for _ in range(3):
-                line = f.readline().strip()
-                coords = list(map(float, line.split()))
-                points.append(coords)
-            triangles.append(points)
+        # Читаем первую строку и игнорируем комментарии
+        line = f.readline().strip()
+        while line.startswith('#'):
+            line = f.readline().strip()
+        
+        n = int(line)
+        
+        if n != 0:
+            for _ in range(n):
+                points = []
+                points_read = 0
+                while points_read < 3:
+                    line = f.readline().strip()
+                    # Пропускаем пустые строки и комментарии
+                    if not line or line.startswith('#'):
+                        continue
+                    
+                    # Заменяем запятые на пробелы и разбиваем
+                    line = line.replace(',', ' ')
+                    coords = list(map(float, line.split()))
+                    points.append(coords)
+                    points_read += 1
+                
+                triangles.append(points)
     return triangles
 
 def plot_triangles(triangles, filename):
@@ -47,6 +63,6 @@ def plot_triangles(triangles, filename):
     plt.show()
 
 if __name__ == "__main__":
-    filename = "tests/test2.dat"
+    filename = "tests/test3.dat"
     triangles = read_triangles(filename)
     plot_triangles(triangles, filename)

@@ -1,11 +1,13 @@
 #include <iostream>
 #include <set>
+#include <sstream>
 #include "geo.h"
 
 int main()
 {
     size_t n;
     std::cin >> n;
+    std::cin.ignore();
 
     std::vector<Triangle> triangles(n);
     std::vector<Point> points(3);
@@ -14,7 +16,19 @@ int main()
     {
         for (size_t j = 0; j < 3; j++)
         {
-            std::cin >> points[j].x_ >> points[j].y_ >> points[j].z_;
+            // чисто моя преблуда для парсинга файла теста
+            std::string line;
+            std::getline(std::cin, line);
+
+            while (line.empty() || line.find('#') != std::string::npos) std::getline(std::cin, line);
+
+            for (char& c : line) {
+                if (!std::isdigit(c) && c != '-' && c != '.' && c != ' ')
+                    c = ' ';
+            }
+            
+            std::istringstream iss(line);
+            iss >> points[j].x_ >> points[j].y_ >> points[j].z_;
         }
         triangles[i] = Triangle(points[0], points[1], points[2]);
     }

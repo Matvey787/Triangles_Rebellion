@@ -16,7 +16,7 @@ struct Point
     Point() : x_(0.0), y_(0.0), z_(0.0) {}
     Point(double x, double y, double z) : x_(x), y_(y), z_(z) {}
 
-    bool is_among(Point& p1, Point& p2)
+    bool is_among(const Point& p1, const Point& p2) const
     {
         double r1x = std::abs(x_ - p1.x_);
         double r1y = std::abs(y_ - p1.y_);
@@ -43,6 +43,13 @@ struct Point
 
         return is_doubleZero(xdiff, ydiff, zdiff);
     }
+
+    friend std::ostream& operator<<(std::ostream& os, const Point& point)
+    {
+        os << "Point(" << point.x_ << ", " << point.y_ << ", " << point.z_ << ")";
+        return os;
+    }
+
 };
 
 struct GeoVector
@@ -125,6 +132,12 @@ public:
     {
         return basis_;
     }
+
+    friend std::ostream& operator<<(std::ostream& os, const Line& line)
+    {
+        os << "Line(" << line.p_ << ", " << line.basis_ << ")";
+        return os;
+    }
 };
 
 
@@ -146,10 +159,19 @@ class Triangle
 
 public:
     Triangle() : p1_(), p2_(), p3_(), l1_(), l2_(), l3_() {}
+
     Triangle(Point& point1, Point& point2, Point& point3) : 
         p1_(point1), 
         p2_(point2), 
         p3_(point3),
+        l1_(p1_, p2_),
+        l2_(p2_, p3_),
+        l3_(p3_, p1_) {}
+
+    Triangle(Point&& point1, Point&& point2, Point&& point3) : 
+        p1_(std::move(point1)), 
+        p2_(std::move(point2)), 
+        p3_(std::move(point3)),
         l1_(p1_, p2_),
         l2_(p2_, p3_),
         l3_(p3_, p1_) {}
