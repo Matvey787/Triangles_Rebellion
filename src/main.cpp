@@ -1,6 +1,7 @@
 #include <iostream>
 #include <set>
 #include <sstream>
+#include <algorithm>
 #include "geo.h"
 
 int main()
@@ -14,23 +15,40 @@ int main()
 
     for (size_t i = 0; i < n; i++)
     {
-        for (size_t j = 0; j < 3; j++)
-        {
-            // чисто моя преблуда для парсинга файла теста
-            std::string line;
+        std::string line;
+        std::vector<double> coords;
+        
+        while (coords.size() < 9) {
             std::getline(std::cin, line);
-
-            while (line.empty() || line.find('#') != std::string::npos) std::getline(std::cin, line);
-
+            
+            if (line.empty() || line.find('#') != std::string::npos) {
+                continue;
+            }
+            
+            std::replace(line.begin(), line.end(), ',', ' ');
             for (char& c : line) {
-                if (!std::isdigit(c) && c != '-' && c != '.' && c != ' ')
+                if (!std::isdigit(c) && c != '-' && c != '.' && c != ' ') {
                     c = ' ';
+                }
             }
             
             std::istringstream iss(line);
-            iss >> points[j].x_ >> points[j].y_ >> points[j].z_;
+            double coord;
+            while (iss >> coord) {
+                coords.push_back(coord);
+            }
         }
-        triangles[i] = Triangle(points[0], points[1], points[2]);
+
+        if (coords.size() != 9) {
+            throw std::runtime_error("Invalid input: expected 9 coordinates for triangle, got " + 
+                                std::to_string(coords.size()));
+        }
+
+        triangles[i] = Triangle(
+            Point(coords[0], coords[1], coords[2]),
+            Point(coords[3], coords[4], coords[5]), 
+            Point(coords[6], coords[7], coords[8])
+        );
     }
 
     size_t intersects = 0;
