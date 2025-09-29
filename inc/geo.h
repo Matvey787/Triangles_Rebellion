@@ -32,7 +32,11 @@ struct Point
 
         if (std::isnan(rx) && std::isnan(ry) && std::isnan(rz)) return false;
 
-        return ((r1x + r2x) == rx) && ((r1y + r2y) == ry) && ((r1z + r2z) == rz);
+        double diffX = r1x + r2x - rx;
+        double diffY = r1y + r2y - ry;
+        double diffZ = r1z + r2z - rz;
+
+        return is_doubleZero(diffX) && is_doubleZero(diffY) && is_doubleZero(diffZ);
     }
 
     bool is_equalTo(Point& anotherPoint)
