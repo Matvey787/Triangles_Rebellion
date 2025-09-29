@@ -92,16 +92,6 @@ bool Triangle::intersect3D(Triangle& anotherTriangle)
     if (ip6.is_among(anotherTriangle.p3_, anotherTriangle.p1_)) ripat.push_back(&ip6);
 
 
-    // for (auto& i : riptt)
-    // {
-    //     std::cout << *i << std::endl;
-    // }
-    // std::cout << "-------" << std::endl;
-    // for (auto& i : ripat)
-    // {
-    //     std::cout << *i << std::endl;
-    // }
-
     // Если таких точек не оказалось, то есть плоскости треугольников пересекаются, но сами 
     // треугольники оказались далеки от линии пересечения
     if (riptt.empty() || ripat.empty()) return false;
