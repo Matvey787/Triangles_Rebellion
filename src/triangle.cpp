@@ -227,7 +227,7 @@ bool Triangle::intersect2D(Triangle& anotherTriangle)
         isAmongAnyPair(anotherTriangle.p2_, ip12, ip22, ip32) &&
         isAmongAnyPair(anotherTriangle.p3_, ip13, ip23, ip33);
 
-    if (thisInside || anotherInside)
+    if (thisInside && anotherInside)
     {
         return true;
     }

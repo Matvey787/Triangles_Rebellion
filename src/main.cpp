@@ -59,6 +59,7 @@ int main()
         for (size_t j = i + 1; j < n; j++)
             if (triangles[i].is_intersect(triangles[j]))
             {
+                // std::cout << "Intersection found between triangle " << triangles[i] << " and triangle " << triangles[j] << "[ " << i << ", " << j << " ]" << std::endl;
                 intersectsTriangles.insert(i);
                 intersectsTriangles.insert(j);
             }

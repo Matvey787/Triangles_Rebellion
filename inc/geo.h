@@ -187,6 +187,12 @@ public:
     bool is_parallelTo(Triangle& anotherTriangle);
 
     bool is_intersect(Triangle& anotherTriangle);
+
+    friend std::ostream& operator<<(std::ostream& os, const Triangle& triangle)
+    {
+        os << "Triangle(" << triangle.p1_ << ", " << triangle.p2_ << ", " << triangle.p3_ << ")";
+        return os;
+    }
 };
 
 
