@@ -161,14 +161,20 @@ bool Triangle::intersect2D(Triangle& anotherTriangle)
     // std::cout << "l1: " << l1_ << std::endl;
     // std::cout << "l1 intersection points: " << ip11 << " " << ip12 << " " << ip13 << std::endl;
 
-    bool ip11_belong_t1_and_t2 = ip11.is_among(p1_, p2_) &&
-                                 ip11.is_among(anotherTriangle.p1_, anotherTriangle.p2_);
+    bool ip11_belong_t1 = ip11.is_among(p1_, p2_);
+    bool ip11_belong_t2 = ip11.is_among(anotherTriangle.p1_, anotherTriangle.p2_);
 
-    bool ip12_belong_t1_and_t2 = ip12.is_among(p1_, p2_) &&
-                                 ip12.is_among(anotherTriangle.p2_, anotherTriangle.p3_);
+    bool ip12_belong_t1 = ip12.is_among(p1_, p2_);
+    bool ip12_belong_t2 = ip12.is_among(anotherTriangle.p2_, anotherTriangle.p3_);
 
-    bool ip13_belong_t1_and_t2 = ip13.is_among(p1_, p2_) &&
-                                 ip13.is_among(anotherTriangle.p3_, anotherTriangle.p1_);
+    bool ip13_belong_t1 = ip13.is_among(p1_, p2_);
+    bool ip13_belong_t2 = ip13.is_among(anotherTriangle.p3_, anotherTriangle.p1_);
+
+    bool ip11_belong_t1_and_t2 = ip11_belong_t1 && ip11_belong_t2;
+
+    bool ip12_belong_t1_and_t2 = ip12_belong_t1 && ip12_belong_t2;
+
+    bool ip13_belong_t1_and_t2 = ip13_belong_t1 && ip13_belong_t2;
 
     if (ip11_belong_t1_and_t2 || ip12_belong_t1_and_t2 || ip13_belong_t1_and_t2) return true;
 
@@ -180,14 +186,18 @@ bool Triangle::intersect2D(Triangle& anotherTriangle)
     // std::cout << "l2: " << l2_ << std::endl;
     // std::cout << "l2 intersection points: " << ip21 << " " << ip22 << " " << ip23 << std::endl;
 
-    bool ip21_belong_t1_and_t2 = ip21.is_among(p2_, p3_) && 
-                          ip21.is_among(anotherTriangle.p1_, anotherTriangle.p2_);
+    bool ip21_belong_t1 = ip21.is_among(p2_, p3_);
+    bool ip21_belong_t2 = ip21.is_among(anotherTriangle.p1_, anotherTriangle.p2_);
 
-    bool ip22_belong_t1_and_t2 = ip22.is_among(p2_, p3_) &&
-                          ip22.is_among(anotherTriangle.p2_, anotherTriangle.p3_);
+    bool ip22_belong_t1 = ip22.is_among(p2_, p3_);
+    bool ip22_belong_t2 = ip22.is_among(anotherTriangle.p2_, anotherTriangle.p3_);
 
-    bool ip23_belong_t1_and_t2 = ip23.is_among(p2_, p3_) &&
-                          ip23.is_among(anotherTriangle.p3_, anotherTriangle.p1_);
+    bool ip23_belong_t1 = ip23.is_among(p2_, p3_);
+    bool ip23_belong_t2 = ip23.is_among(anotherTriangle.p3_, anotherTriangle.p1_);
+
+    bool ip21_belong_t1_and_t2 = ip21_belong_t1 && ip21_belong_t2;
+    bool ip22_belong_t1_and_t2 = ip22_belong_t1 && ip22_belong_t2;
+    bool ip23_belong_t1_and_t2 = ip23_belong_t1 && ip23_belong_t2;
 
     if (ip21_belong_t1_and_t2 || ip22_belong_t1_and_t2 || ip23_belong_t1_and_t2) return true;
 
@@ -198,14 +208,18 @@ bool Triangle::intersect2D(Triangle& anotherTriangle)
     // std::cout << "l3: " << l3_ << std::endl;
     // std::cout << "l3 intersection points: " << ip31 << " " << ip32 << " " << ip33 << std::endl;
 
-    bool ip31_belong_t1_and_t2 = ip31.is_among(p3_, p1_) &&
-                          ip31.is_among(anotherTriangle.p1_, anotherTriangle.p2_);
+    bool ip31_belong_t1 = ip31.is_among(p3_, p1_);
+    bool ip31_belong_t2 = ip31.is_among(anotherTriangle.p1_, anotherTriangle.p2_);
 
-    bool ip32_belong_t1_and_t2 = ip32.is_among(p3_, p1_) &&
-                          ip32.is_among(anotherTriangle.p2_, anotherTriangle.p3_);
+    bool ip32_belong_t1 = ip32.is_among(p3_, p1_);
+    bool ip32_belong_t2 = ip32.is_among(anotherTriangle.p2_, anotherTriangle.p3_);
 
-    bool ip33_belong_t1_and_t2 = ip33.is_among(p3_, p1_) &&
-                          ip33.is_among(anotherTriangle.p3_, anotherTriangle.p1_);
+    bool ip33_belong_t1 = ip33.is_among(p3_, p1_);
+    bool ip33_belong_t2 = ip33.is_among(anotherTriangle.p3_, anotherTriangle.p1_);
+
+    bool ip31_belong_t1_and_t2 = ip31_belong_t1 && ip31_belong_t2;
+    bool ip32_belong_t1_and_t2 = ip32_belong_t1 && ip32_belong_t2;
+    bool ip33_belong_t1_and_t2 = ip33_belong_t1 && ip33_belong_t2;
 
     if (ip31_belong_t1_and_t2 || ip32_belong_t1_and_t2 || ip33_belong_t1_and_t2) return true;
 
@@ -215,19 +229,33 @@ bool Triangle::intersect2D(Triangle& anotherTriangle)
         return pt.is_among(a, b) || pt.is_among(a, c) || pt.is_among(b, c);
     };
 
+
+    size_t numberOfPoints_belong_t1 = ip11_belong_t1 + ip12_belong_t1 + ip13_belong_t1 +        
+                               ip21_belong_t1 + ip22_belong_t1 + ip23_belong_t1 + 
+                               ip31_belong_t1 + ip32_belong_t1 + ip33_belong_t1;
+
+    size_t numberOfPoints_belong_t2 = ip11_belong_t2 + ip12_belong_t2 + ip13_belong_t2 +        
+                               ip21_belong_t2 + ip22_belong_t2 + ip23_belong_t2 + 
+                               ip31_belong_t2 + ip32_belong_t2 + ip33_belong_t2;
+
     // вершины this внутри отрезков пересечений со сторонами another
     bool thisInside =
-        isAmongAnyPair(p1_, ip11, ip12, ip13) &&
+        isAmongAnyPair(p1_, ip11, ip12, ip13) && 
         isAmongAnyPair(p2_, ip21, ip22, ip23) &&
-        isAmongAnyPair(p3_, ip31, ip32, ip33);
+        isAmongAnyPair(p3_, ip31, ip32, ip33) && (numberOfPoints_belong_t2 == 6);
+
+    // std::cout << p1_ <<": "<< isAmongAnyPair(p1_, ip11, ip12, ip13) << " "
+              // << isAmongAnyPair(p2_, ip21, ip22, ip23) << " "
+              // << isAmongAnyPair(p3_, ip31, ip32, ip33) << std::endl;
 
     // вершины another внутри отрезков пересечений со сторонами this
     bool anotherInside =
         isAmongAnyPair(anotherTriangle.p1_, ip11, ip21, ip31) &&
         isAmongAnyPair(anotherTriangle.p2_, ip12, ip22, ip32) &&
-        isAmongAnyPair(anotherTriangle.p3_, ip13, ip23, ip33);
+        isAmongAnyPair(anotherTriangle.p3_, ip13, ip23, ip33) && (numberOfPoints_belong_t1 == 6);
 
-    if (thisInside && anotherInside)
+    // std::cout << thisInside << " " << anotherInside << std::endl;
+    if (thisInside || anotherInside)
     {
         return true;
     }

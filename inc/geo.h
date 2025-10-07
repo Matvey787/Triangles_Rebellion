@@ -18,26 +18,34 @@ struct Point
 
     bool is_among(const Point& p1, const Point& p2) const
     {
-        double r1x = std::abs(x_ - p1.x_);
-        double r1y = std::abs(y_ - p1.y_);
-        double r1z = std::abs(z_ - p1.z_);
+        // Вектор p1p
+        double vx1 = x_ - p1.x_;
+        double vy1 = y_ - p1.y_;
+        double vz1 = z_ - p1.z_;
 
-        double r2x = std::abs(x_ - p2.x_);
-        double r2y = std::abs(y_ - p2.y_);
-        double r2z = std::abs(z_ - p2.z_);
+        // Вектор p1p2
+        double vx2 = p2.x_ - p1.x_;
+        double vy2 = p2.y_ - p1.y_;
+        double vz2 = p2.z_ - p1.z_;
 
-        double rx = std::abs(p2.x_ - p1.x_);
-        double ry = std::abs(p2.y_ - p1.y_);
-        double rz = std::abs(p2.z_ - p1.z_);
+        // Сравниваем направления (проверяем коллинеарность)
+        double crossX = vy1 * vz2 - vz1 * vy2;
+        double crossY = vz1 * vx2 - vx1 * vz2;
+        double crossZ = vx1 * vy2 - vy1 * vx2;
+        if (!is_doubleZero(crossX) || !is_doubleZero(crossY) || !is_doubleZero(crossZ))
+            return false;
 
-        if (std::isnan(rx) && std::isnan(ry) && std::isnan(rz)) return false;
+        // Проверяем принадлежность отрезку
+        double dot = vx1 * vx2 + vy1 * vy2 + vz1 * vz2;
+        if (dot < 0)
+            return false;
+        double lenSq = vx2 * vx2 + vy2 * vy2 + vz2 * vz2;
+        if (dot > lenSq)
+            return false;
 
-        double diffX = r1x + r2x - rx;
-        double diffY = r1y + r2y - ry;
-        double diffZ = r1z + r2z - rz;
-
-        return is_doubleZero(diffX) && is_doubleZero(diffY) && is_doubleZero(diffZ);
+        return true;
     }
+
 
     bool is_equalTo(Point& anotherPoint)
     {
