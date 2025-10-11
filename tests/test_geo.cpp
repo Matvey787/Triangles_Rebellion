@@ -640,6 +640,26 @@ TEST(MYTriangleTest, 3dTest7_intersection) {
     EXPECT_TRUE(t1.is_intersect(t2));
 }
 
+// кусок одого заходит на другой
+TEST(MYTriangleTest, 2dTest8_intersection) {
+    Triangle t1(Point(0, 0, 0), Point(3, 0, 0), Point(0, 3, 0));
+    Triangle t2(Point(1, 1, 0), Point(3,5,0), Point(4, 4, 0));
+    EXPECT_TRUE(t1.is_intersect(t2));
+}
+
+// один внутри другого (стороны параллельны)
+TEST(MYTriangleTest, 2dTest9_intersection) {
+    Triangle t1(Point(0, 0, 0), Point(3, 0, 0), Point(0, 3, 0));
+    Triangle t2(Point(0.5, 2, 0), Point(2, 0.5,0), Point(0.5, 0.5, 0));
+    EXPECT_TRUE(t1.is_intersect(t2));
+}
+
+// один внутри другого (стороны не параллельны)
+TEST(MYTriangleTest, 2dTest10_intersection) {
+    Triangle t1(Point(0, 0, 0), Point(3, 0, 0), Point(0, 3, 0));
+    Triangle t2(Point(0.5, 2, 0), Point(2, 0.1, 0), Point(0.5, 0.5, 0));
+    EXPECT_TRUE(t1.is_intersect(t2));
+}
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
