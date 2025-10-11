@@ -597,6 +597,50 @@ TEST(GROKTriangleTest, MixedCoordinatesTouchPoint) {
     EXPECT_TRUE(t1.is_intersect(t2)); // Общая точка (0.5, 0.0, 1.0)
 }
 
+TEST(MYTriangleTest, 2dTest1_noIntersection) {
+    Triangle t1(Point(0, 0, 0), Point(3, 0, 0), Point(0, 3, 0));
+    Triangle t2(Point(2, 3, 0), Point(5, 3, 0), Point(2, 6, 0));
+    EXPECT_FALSE(t1.is_intersect(t2));
+}
+
+TEST(MYTriangleTest, 2dTest2_noIntersection) {
+    Triangle t1(Point(0, 0, 0), Point(3, 0, 0), Point(0, 3, 0));
+    Triangle t2(Point(3, 1, 0), Point(3, 2, 0), Point(6, 4, 0));
+    EXPECT_FALSE(t1.is_intersect(t2));
+}
+
+TEST(MYTriangleTest, 2dTest3_noIntersection) {
+    Triangle t1(Point(0, 0, 0), Point(3, 0, 0), Point(0, 3, 0));
+    Triangle t2(Point(-0.5, -0.5, 0), Point(-0.5, 100, 0), Point(-100, -100, 0));
+    EXPECT_FALSE(t1.is_intersect(t2));
+}
+
+TEST(MYTriangleTest, 2dTest4_noIntersection) {
+    Triangle t1(Point(0, 0, 0), Point(3, 0, 0), Point(0, 3, 0));
+    Triangle t2(Point(3, -2, 0), Point(5, -4, 0), Point(4, 3, 0));
+    EXPECT_FALSE(t1.is_intersect(t2));
+}
+
+TEST(MYTriangleTest, 3dTest5_noIntersection) {
+    Triangle t1(Point(0, 0, 0), Point(3, 0, 0), Point(0, 3, 0));
+    Triangle t2(Point(0, 0, 0.2), Point(3, 0, 0.2), Point(0, 3, 0.2));
+    EXPECT_FALSE(t1.is_intersect(t2));
+}
+
+TEST(MYTriangleTest, 3dTest6_noIntersection) {
+    Triangle t1(Point(0, 0, 0), Point(3, 0, 0), Point(0, 3, 0));
+    Triangle t2(Point(10.912, 10.912, 10000000.0001), Point(3, 0, 0.0123), Point(0, 3, 0.0123));
+    EXPECT_FALSE(t1.is_intersect(t2));
+}
+
+// пересечение по точке
+TEST(MYTriangleTest, 3dTest7_intersection) {
+    Triangle t1(Point(0, 0, 0), Point(3, 0, 0), Point(0, 3, 0));
+    Triangle t2(Point(3, -2, -1234), Point(5, -4, 100000), Point(3, 0, 0));
+    EXPECT_TRUE(t1.is_intersect(t2));
+}
+
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
