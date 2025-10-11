@@ -18,6 +18,9 @@ struct Point
 
     bool is_among(const Point& p1, const Point& p2) const
     {
+        if (this->is_equalTo(p1) || this->is_equalTo(p2))
+            return true;
+
         // Вектор p1p
         double vx1 = x_ - p1.x_;
         double vy1 = y_ - p1.y_;
@@ -47,7 +50,7 @@ struct Point
     }
 
 
-    bool is_equalTo(Point& anotherPoint)
+    bool is_equalTo(const Point& anotherPoint) const
     {
         double xdiff = x_ - anotherPoint.x_;
         double ydiff = y_ - anotherPoint.y_;

@@ -75,6 +75,8 @@ bool Triangle::intersect3D(Triangle& anotherTriangle)
     Point ip2 = l2_.intersect(intersectLine);
     Point ip3 = l3_.intersect(intersectLine);
 
+    // std::cout << ip1 << ip2 << ip3 << std::endl;
+
     // Проверяем, что точки также лежат на соответствующих им сторонам треугольника
     std::vector<Point*> riptt; // real intersection points of this triangle
     if (ip1.is_among(p1_, p2_)) riptt.push_back(&ip1);
@@ -86,6 +88,8 @@ bool Triangle::intersect3D(Triangle& anotherTriangle)
     Point ip4 = anotherTriangle.l1_.intersect(intersectLine);
     Point ip5 = anotherTriangle.l2_.intersect(intersectLine);
     Point ip6 = anotherTriangle.l3_.intersect(intersectLine);
+
+    // std::cout << ip4 << ip5 << ip6 << std::endl;
     std::vector<Point*> ripat; // real intersection points of another triangle
     if (ip4.is_among(anotherTriangle.p1_, anotherTriangle.p2_)) ripat.push_back(&ip4);
     if (ip5.is_among(anotherTriangle.p2_, anotherTriangle.p3_)) ripat.push_back(&ip5);

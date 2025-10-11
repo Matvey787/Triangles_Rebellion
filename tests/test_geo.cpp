@@ -357,12 +357,6 @@ TEST(TriangleTest, VertexOnOtherSide) {
     EXPECT_TRUE(t1.is_intersect(t2)); // Точка (2,0,0) лежит на ребре t1
 }
 
-
-int main(int argc, char **argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
-
 TEST(CHATGPTTriangleTest, 2dXYPlaneIntersectionTest) {
     // Пересечение в плоскости XY
     Triangle t1(Point(0, 0, 0), Point(2, 0, 0), Point(0, 2, 0));
@@ -601,4 +595,9 @@ TEST(GROKTriangleTest, MixedCoordinatesTouchPoint) {
     Triangle t1(Point(-1.0, 0.0, 1.0), Point(2.0, 0.0, 1.0), Point(0.5, 2.0, 1.0));
     Triangle t2(Point(0.5, 0.0, 1.0), Point(3.0, 1.0, 2.0), Point(0.5, -1.0, 0.0));
     EXPECT_TRUE(t1.is_intersect(t2)); // Общая точка (0.5, 0.0, 1.0)
+}
+
+int main(int argc, char **argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }
