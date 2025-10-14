@@ -61,7 +61,7 @@ bool Triangle::intersect3D(Triangle& anotherTriangle)
 {
     Line intersectLine = findIntersectLine(anotherTriangle);
 
-    // std::cout << "Intersection Line: " << intersectLine << std::endl;
+    // std::cout << "Intersection 3d Line: " << intersectLine << std::endl;
 
     GeoVector intersectionBasis = intersectLine.get_basis();
 
@@ -82,6 +82,11 @@ bool Triangle::intersect3D(Triangle& anotherTriangle)
     if (ip1.is_among(p1_, p2_)) riptt.push_back(&ip1);
     if (ip2.is_among(p2_, p3_)) riptt.push_back(&ip2);
     if (ip3.is_among(p3_, p1_)) riptt.push_back(&ip3);
+
+    for (auto ip : riptt)
+    {
+        // std::cout << "Intersection point (this triangle): " << *ip << std::endl;
+    }
 
     // another triangle
     // Поступаем аналогично и со вторым треугольником
@@ -123,7 +128,11 @@ bool Triangle::intersect3D(Triangle& anotherTriangle)
         // смотрим, какая то точка второго треугольника лежит в отрезке первого треугольника
         for (Point* ip : ripat)
         {
-            if (ip->is_among(*ip1_riptt, *ip2_riptt)) return true;
+            if (ip->is_among(*ip1_riptt, *ip2_riptt))
+            {
+                // std::cout << "AAAAA " << *ip << std::endl;
+                return true;
+            }
         }
     }
 
@@ -139,7 +148,12 @@ bool Triangle::intersect3D(Triangle& anotherTriangle)
 
         for (Point* ip : riptt)
         {
-            if (ip->is_among(*ip1_ripat, *ip2_ripat)) return true;
+            if (ip->is_among(*ip1_ripat, *ip2_ripat))
+            {
+                // std::cout << *ip << " among " << *ip1_ripat << " and " << *ip2_ripat << std::endl;
+                return true;
+            }
+            
         }
     }
 
@@ -148,7 +162,7 @@ bool Triangle::intersect3D(Triangle& anotherTriangle)
 
 bool Triangle::intersect2D(Triangle& anotherTriangle)
 {
-    // std::cout << "It's 2D intersection" << std::endl;
+    // // std::cout << "It's 2D intersection" << std::endl;
     // вектор от одной точке одного треугольника до точки другого треугольника
     GeoVector helpVec(p1_, anotherTriangle.p1_);
 
@@ -162,8 +176,8 @@ bool Triangle::intersect2D(Triangle& anotherTriangle)
     Point ip12 = l1_.intersect(anotherTriangle.l2_);
     Point ip13 = l1_.intersect(anotherTriangle.l3_);
 
-    // std::cout << "l1: " << l1_ << std::endl;
-    // std::cout << "l1 intersection points: " << ip11 << " " << ip12 << " " << ip13 << std::endl;
+    // // std::cout << "l1: " << l1_ << std::endl;
+    // // std::cout << "l1 intersection points: " << ip11 << " " << ip12 << " " << ip13 << std::endl;
 
     bool ip11_belong_t1 = ip11.is_among(p1_, p2_);
     bool ip11_belong_t2 = ip11.is_among(anotherTriangle.p1_, anotherTriangle.p2_);
@@ -187,8 +201,8 @@ bool Triangle::intersect2D(Triangle& anotherTriangle)
     Point ip22 = l2_.intersect(anotherTriangle.l2_);
     Point ip23 = l2_.intersect(anotherTriangle.l3_);
 
-    // std::cout << "l2: " << l2_ << std::endl;
-    // std::cout << "l2 intersection points: " << ip21 << " " << ip22 << " " << ip23 << std::endl;
+    // // std::cout << "l2: " << l2_ << std::endl;
+    // // std::cout << "l2 intersection points: " << ip21 << " " << ip22 << " " << ip23 << std::endl;
 
     bool ip21_belong_t1 = ip21.is_among(p2_, p3_);
     bool ip21_belong_t2 = ip21.is_among(anotherTriangle.p1_, anotherTriangle.p2_);
@@ -209,8 +223,8 @@ bool Triangle::intersect2D(Triangle& anotherTriangle)
     Point ip32 = l3_.intersect(anotherTriangle.l2_);
     Point ip33 = l3_.intersect(anotherTriangle.l3_);
 
-    // std::cout << "l3: " << l3_ << std::endl;
-    // std::cout << "l3 intersection points: " << ip31 << " " << ip32 << " " << ip33 << std::endl;
+    // // std::cout << "l3: " << l3_ << std::endl;
+    // // std::cout << "l3 intersection points: " << ip31 << " " << ip32 << " " << ip33 << std::endl;
 
     bool ip31_belong_t1 = ip31.is_among(p3_, p1_);
     bool ip31_belong_t2 = ip31.is_among(anotherTriangle.p1_, anotherTriangle.p2_);
@@ -248,7 +262,7 @@ bool Triangle::intersect2D(Triangle& anotherTriangle)
         isAmongAnyPair(p2_, ip21, ip22, ip23) &&
         isAmongAnyPair(p3_, ip31, ip32, ip33) && (numberOfPoints_belong_t2 == 6);
 
-    // std::cout << p1_ <<": "<< isAmongAnyPair(p1_, ip11, ip12, ip13) << " "
+    // // std::cout << p1_ <<": "<< isAmongAnyPair(p1_, ip11, ip12, ip13) << " "
               // << isAmongAnyPair(p2_, ip21, ip22, ip23) << " "
               // << isAmongAnyPair(p3_, ip31, ip32, ip33) << std::endl;
 
@@ -258,7 +272,7 @@ bool Triangle::intersect2D(Triangle& anotherTriangle)
         isAmongAnyPair(anotherTriangle.p2_, ip12, ip22, ip32) &&
         isAmongAnyPair(anotherTriangle.p3_, ip13, ip23, ip33) && (numberOfPoints_belong_t1 == 6);
 
-    // std::cout << thisInside << " " << anotherInside << std::endl;
+    // // std::cout << thisInside << " " << anotherInside << std::endl;
     if (thisInside || anotherInside)
     {
         return true;
@@ -277,15 +291,15 @@ bool Triangle::is_parallelTo(Triangle& anotherTriangle)
 
 bool Triangle::is_intersect(Triangle& anotherTriangle)
 {
-    // std::cout << p1_ << std::endl;
-    // std::cout << p2_ << std::endl;
-    // std::cout << p3_ << std::endl;
+    // // std::cout << p1_ << std::endl;
+    // // std::cout << p2_ << std::endl;
+    // // std::cout << p3_ << std::endl;
 
-    // std::cout << anotherTriangle.p1_ << std::endl;
-    // std::cout << anotherTriangle.p2_ << std::endl;
-    // std::cout << anotherTriangle.p3_ << std::endl;
+    // // std::cout << anotherTriangle.p1_ << std::endl;
+    // // std::cout << anotherTriangle.p2_ << std::endl;
+    // // std::cout << anotherTriangle.p3_ << std::endl;
     if (this->is_parallelTo(anotherTriangle)) return intersect2D(anotherTriangle);
 
-    // std::cout << "It's 3d intersection" << std::endl;
+    // // std::cout << "It's 3d intersection" << std::endl;
     return intersect3D(anotherTriangle);
 }

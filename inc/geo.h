@@ -18,32 +18,40 @@ struct Point
 
     bool is_among(const Point& p1, const Point& p2) const
     {
+        // Если точка совпадает с одним из концов отрезка, она на нем лежит.
         if (this->is_equalTo(p1) || this->is_equalTo(p2))
             return true;
 
-        // Вектор p1p
+        if (p1.is_equalTo(p2))
+            return false;
+
+        // Вектор p1p (от начала отрезка до нашей точки)
         double vx1 = x_ - p1.x_;
         double vy1 = y_ - p1.y_;
         double vz1 = z_ - p1.z_;
 
-        // Вектор p1p2
+        // Вектор p1p2 (весь отрезок)
         double vx2 = p2.x_ - p1.x_;
         double vy2 = p2.y_ - p1.y_;
         double vz2 = p2.z_ - p1.z_;
 
-        // Сравниваем направления (проверяем коллинеарность)
+        // Проверяем коллинеарность через векторное произведение.
+        // Если оно не равно нулю, векторы не коллинеарны.
         double crossX = vy1 * vz2 - vz1 * vy2;
         double crossY = vz1 * vx2 - vx1 * vz2;
         double crossZ = vx1 * vy2 - vy1 * vx2;
         if (!is_doubleZero(crossX) || !is_doubleZero(crossY) || !is_doubleZero(crossZ))
             return false;
 
-        // Проверяем принадлежность отрезку
+        // Проверяем, что точка лежит внутри отрезка, а не на продолжении прямой.
+        // Скалярное произведение векторов p1p и p1p2 должно быть в диапазоне
+        // от 0 до квадрата длины p1p2.
         double dot = vx1 * vx2 + vy1 * vy2 + vz1 * vz2;
-        if (dot < 0)
+        if (dot < 0) // Точка находится "позади" p1
             return false;
+
         double lenSq = vx2 * vx2 + vy2 * vy2 + vz2 * vz2;
-        if (dot > lenSq)
+        if (dot > lenSq) // Точка находится "дальше" p2
             return false;
 
         return true;

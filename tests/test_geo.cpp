@@ -661,6 +661,37 @@ TEST(MYTriangleTest, 2dTest10_intersection) {
     EXPECT_TRUE(t1.is_intersect(t2));
 }
 
+TEST(MYTriangleTest, 3dTest11_intersection) {
+    Triangle t1(Point(0, 0, 0), Point(3, 0, 0), Point(0, 3, 0));
+    Triangle t2(Point(1, 1, 0), Point(2, 2, 2), Point(2, -2, 2));
+    EXPECT_TRUE(t1.is_intersect(t2));
+}
+
+TEST(MYTriangleTest, 3dTest12_noIntersection) {
+    Triangle t1(Point(0, 0, 0), Point(3, 0, 0), Point(0, 3, 0));
+    Triangle t2(Point(1, 1, 0.1), Point(2, 2, 2), Point(2, -2, 2));
+    EXPECT_FALSE(t1.is_intersect(t2));
+}
+
+TEST(MYTriangleTest, 3dTest13_intersection) {
+    Triangle t1(Point(10, 0, 0), Point(0, 10, 0), Point(0, 0, 0));
+    Triangle t2(Point(5, 1, 1), Point(5, -1, -1), Point(5, -3, 10));
+    EXPECT_TRUE(t1.is_intersect(t2));
+}
+
+TEST(MYTriangleTest, 3dTest14_noIntersection) {
+    Triangle t1(Point(10, 0, 0), Point(0, 10, 0), Point(0, 0, 0));
+    Triangle t2(Point(5, 1, 1.01), Point(5, -1, -1), Point(5, -3, 10));
+    EXPECT_FALSE(t1.is_intersect(t2));
+}
+
+TEST(MYTriangleTest, 3dTest15_intersection) {
+    Triangle t1(Point(2.0, 1.0, 5.0), Point(8.0, 3.0, 2.0), Point(4.0, 9.0, 6.0));
+    Triangle t2(Point(3.3, 4.3, 4.7), Point(6.7, 5.0, 3.8), Point(4.7, 7.0, 5.5));
+    EXPECT_TRUE(t1.is_intersect(t2));
+}
+
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
