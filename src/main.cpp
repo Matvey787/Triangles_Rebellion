@@ -10,8 +10,8 @@ int main()
     std::cin >> n;
     std::cin.ignore();
 
-    std::vector<Triangle> triangles(n);
-    std::vector<Point> points(3);
+    std::vector<Geo::Triangle> triangles(n);
+    std::vector<Geo::Point> points(3);
 
     for (size_t i = 0; i < n; i++)
     {
@@ -44,10 +44,10 @@ int main()
                                 std::to_string(coords.size()));
         }
 
-        triangles[i] = Triangle(
-            Point(coords[0], coords[1], coords[2]),
-            Point(coords[3], coords[4], coords[5]), 
-            Point(coords[6], coords[7], coords[8])
+        triangles[i] = Geo::Triangle(
+            Geo::Point(coords[0], coords[1], coords[2]),
+            Geo::Point(coords[3], coords[4], coords[5]), 
+            Geo::Point(coords[6], coords[7], coords[8])
         );
     }
 

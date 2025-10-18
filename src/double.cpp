@@ -12,3 +12,25 @@ bool is_doubleZero(double num1, double num2, double num3)
 
     return std::abs(num1) < EPSILON && std::abs(num2) < EPSILON && std::abs(num3) < EPSILON;
 }
+
+bool is_aboveZero(double num1, double num2, double num3)
+{
+    if (std::isnan(num2) && std::isnan(num3))
+        return num1 > EPSILON;
+
+    if (std::isnan(num3))
+        return num1 > EPSILON && num2 > EPSILON;
+
+    return num1 > EPSILON && num2 > EPSILON && num3 > EPSILON;
+}
+
+bool is_belowZero(double num1, double num2, double num3)
+{
+    if (std::isnan(num2) && std::isnan(num3))
+        return num1 < -EPSILON;
+
+    if (std::isnan(num3))
+        return num1 < -EPSILON && num2 < -EPSILON;
+
+    return num1 < -EPSILON && num2 < -EPSILON && num3 < -EPSILON;
+}
