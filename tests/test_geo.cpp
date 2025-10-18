@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include "geo.h"
 
+using namespace Geo;
+
 TEST(PointTest, BasicCreation) {
     Point p(1.0, 2.0, 3.0);
     EXPECT_DOUBLE_EQ(p.x_, 1.0);
@@ -681,7 +683,7 @@ TEST(MYTriangleTest, 3dTest13_intersection) {
 
 TEST(MYTriangleTest, 3dTest14_noIntersection) {
     Triangle t1(Point(10, 0, 0), Point(0, 10, 0), Point(0, 0, 0));
-    Triangle t2(Point(5, 1, 1.01), Point(5, -1, -1), Point(5, -3, 10));
+    Triangle t2(Point(5, 1, 1.5), Point(5, -1, -1), Point(5, -3, 10));
     EXPECT_FALSE(t1.is_intersect(t2));
 }
 

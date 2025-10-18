@@ -7,6 +7,13 @@
 #include <vector>
 #include <ostream>
 
+namespace Geo {
+
+    namespace detail {
+    enum class planes_t;
+}
+
+
 struct Point
 {
     double x_;
@@ -81,7 +88,7 @@ struct GeoVector
     double yProj_;
     double zProj_;
 
-    GeoVector(Point& p1, Point& p2)
+    GeoVector(const Point& p1, const Point& p2)
     {
         xProj_ = p2.x_ - p1.x_;
         yProj_ = p2.y_ - p1.y_;
@@ -100,7 +107,7 @@ struct GeoVector
         return is_doubleZero(xProj_, yProj_, zProj_);
     }
 
-    bool is_parallel(GeoVector& anotherVector)
+    bool is_parallel(const GeoVector& anotherVector) const
     {
         double crossX = yProj_ * anotherVector.zProj_ - zProj_ * anotherVector.yProj_;
         double crossY = zProj_ * anotherVector.xProj_ - xProj_ * anotherVector.zProj_;
@@ -109,7 +116,7 @@ struct GeoVector
         return is_doubleZero(crossX, crossY, crossZ);
     }
 
-    GeoVector multiply_vectorially_by(const GeoVector& anotherVector)
+    GeoVector multiply_vectorially_by(const GeoVector& anotherVector) const
     {
         return GeoVector(
             yProj_ * anotherVector.zProj_ - zProj_ * anotherVector.yProj_,
@@ -118,11 +125,18 @@ struct GeoVector
         );
     }
 
-    double multiply_scalar_by(const GeoVector& anotherVector)
+    // Скалярное произведение вектора на вектор
+    double multiply_scalar_by(const GeoVector& anotherVector) const
     {
         return xProj_ * anotherVector.xProj_ +
                yProj_ * anotherVector.yProj_ +
                zProj_ * anotherVector.zProj_;
+    }
+
+    // Скалярное произведение вектора на радиус-вектор точки
+    double multiply_scalar_by(const Point& p) const
+    {
+        return xProj_ * p.x_ + yProj_ * p.y_ + zProj_ * p.z_;
     }
 
     friend std::ostream& operator<<(std::ostream& os, const GeoVector& vec)
@@ -145,15 +159,27 @@ public:
     Line(Point& point1, Point& point2) :
         p_(point1),
         basis_(point2.x_ - point1.x_, point2.y_ - point1.y_, point2.z_ - point1.z_) {}
+
+    Line(const Point& point1, const Point& point2) :
+        p_(point1),
+        basis_(point2.x_ - point1.x_, point2.y_ - point1.y_, point2.z_ - point1.z_) {}
+
     Line(GeoVector& basis, Point&& point) : p_(point), basis_(basis) {}
+    
+    Line(GeoVector&& basis, const Point& point) : p_(point), basis_(basis) {}
 
-    Point intersect(Line& anotherLine);
+    Point intersect(const Line& anotherLine) const;
 
-    bool is_parallelTo(Line& anotherLine);
+    bool is_parallelTo(const Line& anotherLine) const;
 
-    GeoVector get_basis()
+    const GeoVector& getBasis() const
     {
         return basis_;
+    }
+
+    const Point& getPoint() const
+    {
+        return p_;
     }
 
     friend std::ostream& operator<<(std::ostream& os, const Line& line)
@@ -177,8 +203,12 @@ class Triangle
     Line findIntersectLine(Triangle& anotherTriangle);
 
     bool intersect3D(Triangle& anotherTriangle);
-
     bool intersect2D(Triangle& anotherTriangle);
+    bool containsPoint(const Point& p);
+    bool isOnEdge(const Point& p);
+    bool is_intersectAABB(const Triangle& anotherTriangle, detail::planes_t projPlane);
+    bool is_intersectSAT(const Triangle& anotherTriangle, detail::planes_t projPlane);
+
 
 public:
     Triangle() : p1_(), p2_(), p3_(), l1_(), l2_(), l3_() {}
@@ -212,8 +242,19 @@ public:
         os << "Triangle(" << triangle.p1_ << ", " << triangle.p2_ << ", " << triangle.p3_ << ")";
         return os;
     }
+
+    const Point& getPoint(size_t index) const
+    {
+        switch (index)
+        {
+        case 1: return p1_;
+        case 2: return p2_;
+        case 3: return p3_;
+        default: throw std::out_of_range("Invalid point index");
+        }
+    }
 };
 
-
+} // namespace Geo
 
 #endif // GEO_H

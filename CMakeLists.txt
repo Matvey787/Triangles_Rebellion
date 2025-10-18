@@ -28,13 +28,15 @@ set(SOURCE_FILES
     src/line.cpp
     src/triangle.cpp
     src/double.cpp
+    src/2dIntersection_Impl.cpp
+    src/3dIntersection_Impl.cpp
 )
 
 SET(EXEC_FILE_NAME "out")
 
 add_executable(${EXEC_FILE_NAME} ${SOURCE_FILES})
 
-add_executable(geo_tests tests/test_geo.cpp src/line.cpp src/triangle.cpp src/double.cpp)
+add_executable(geo_tests tests/test_geo.cpp src/line.cpp src/triangle.cpp src/double.cpp src/2dIntersection_Impl.cpp src/3dIntersection_Impl.cpp)
 target_link_libraries(geo_tests GTest::gtest GTest::gtest_main)
 target_include_directories(geo_tests PRIVATE ${CMAKE_SOURCE_DIR}/inc)
 

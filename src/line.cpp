@@ -1,11 +1,11 @@
 #include "geo.h"
 #include "double.h"
 
-Point Line::intersect(Line& anotherLine)
+Geo::Point Geo::Line::intersect(const Line& anotherLine) const
 {
     // Проверка на параллельность
     if (this->is_parallelTo(anotherLine)) {
-        return Point(NAN, NAN, NAN);
+        return Geo::Point(NAN, NAN, NAN);
     }
     
     // Получаем параметры обеих линий
@@ -47,7 +47,7 @@ Point Line::intersect(Line& anotherLine)
             double z_intersect2 = z2 + s * c2;
             
             if (is_doubleZero(z_intersect1 - z_intersect2)) {
-                return Point(x1 + t * a1, y1 + t * b1, z_intersect1);
+                return Geo::Point(x1 + t * a1, y1 + t * b1, z_intersect1);
             }
         }
     }
@@ -75,7 +75,7 @@ Point Line::intersect(Line& anotherLine)
             double y_intersect2 = y2 + s * b2;
             
             if (is_doubleZero(y_intersect1 - y_intersect2)) {
-                return Point(x1 + t * a1, y_intersect1, z1 + t * c1);
+                return Geo::Point(x1 + t * a1, y_intersect1, z1 + t * c1);
             }
         }
     }
@@ -103,16 +103,16 @@ Point Line::intersect(Line& anotherLine)
             double x_intersect2 = x2 + s * a2;
             
             if (is_doubleZero(x_intersect1 - x_intersect2)) {
-                return Point(x_intersect1, y1 + t * b1, z1 + t * c1);
+                return Geo::Point(x_intersect1, y1 + t * b1, z1 + t * c1);
             }
         }
     }
     
     // Если все методы не сработали
-    return Point(NAN, NAN, NAN);
+    return Geo::Point(NAN, NAN, NAN);
 }
 
-bool Line::is_parallelTo(Line& anotherLine)
+bool Geo::Line::is_parallelTo(const Line& anotherLine) const
 {
     return basis_.is_parallel(anotherLine.basis_);
 }
