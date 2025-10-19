@@ -12,14 +12,20 @@
 # Запуск Google tests с фильтром
 # ./build/geo_tests --gtest_filter="...*"
 
-
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.14)
 project(LIRS_Cache CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(GTest REQUIRED)
+include(FetchContent)
+
+FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/refs/tags/release-1.12.1.zip
+)
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
 
 include_directories(${CMAKE_SOURCE_DIR}/inc)
 
@@ -32,12 +38,19 @@ set(SOURCE_FILES
     src/3dIntersection_Impl.cpp
 )
 
-SET(EXEC_FILE_NAME "out")
-
+set(EXEC_FILE_NAME "out")
 add_executable(${EXEC_FILE_NAME} ${SOURCE_FILES})
 
-add_executable(geo_tests tests/test_geo.cpp src/line.cpp src/triangle.cpp src/double.cpp src/2dIntersection_Impl.cpp src/3dIntersection_Impl.cpp)
-target_link_libraries(geo_tests GTest::gtest GTest::gtest_main)
+add_executable(geo_tests
+    tests/test_geo.cpp
+    src/line.cpp
+    src/triangle.cpp
+    src/double.cpp
+    src/2dIntersection_Impl.cpp
+    src/3dIntersection_Impl.cpp
+)
+
+target_link_libraries(geo_tests gtest gtest_main)
 target_include_directories(geo_tests PRIVATE ${CMAKE_SOURCE_DIR}/inc)
 
 include(CTest)
