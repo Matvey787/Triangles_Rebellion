@@ -1,11 +1,43 @@
 #include "geo.h"
 #include "double.h"
 
-Geo::Point Geo::Line::intersect(const Line& anotherLine) const
+namespace Geo
+{
+
+Point Line::intersect(const Point& p1, const Point& p2, const Point& p3) const {
+
+    // вычисляем нормаль плоскости: (p2 - p1) x (p3 - p1)
+    GeoVector v1{p2.x_ - p1.x_, p2.y_ - p1.y_, p2.z_ - p1.z_};
+    GeoVector v2{p3.x_ - p1.x_, p3.y_ - p1.y_, p3.z_ - p1.z_};
+    GeoVector normal = v1.multiply_vectorially_by(v2);
+
+    // проверяем параллельность линии и плоскости
+    double denom = normal.multiply_scalar_by(basis_);
+    if (is_doubleZero(denom)) {
+        return Point{NAN, NAN, NAN};
+    }
+
+    // d = -normal.dot(p1)
+    GeoVector p1_vec{p1.x_, p1.y_, p1.z_};
+    double d = -normal.multiply_scalar_by(p1_vec);
+
+    // t = -(normal.dot(p_) + d) / (normal.dot(basis_))
+    GeoVector p_vec{p_.x_, p_.y_, p_.z_};
+    double t = -(normal.multiply_scalar_by(p_vec) + d) / denom;
+
+    // вычисляем точку пересечения: p_ + t * basis_
+    return Point{
+        p_.x_ + t * basis_.xProj_,
+        p_.y_ + t * basis_.yProj_,
+        p_.z_ + t * basis_.zProj_
+    };
+}
+
+Point Line::intersect(const Line& anotherLine) const
 {
     // Проверка на параллельность
     if (this->is_parallelTo(anotherLine)) {
-        return Geo::Point(NAN, NAN, NAN);
+        return Point(NAN, NAN, NAN);
     }
     
     // Получаем параметры обеих линий
@@ -116,3 +148,4 @@ bool Geo::Line::is_parallelTo(const Line& anotherLine) const
 {
     return basis_.is_parallel(anotherLine.basis_);
 }
+} // namespace Geo

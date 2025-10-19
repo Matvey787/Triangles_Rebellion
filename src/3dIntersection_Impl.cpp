@@ -29,9 +29,34 @@ namespace detail {
 
 }
 
+bool Triangle::is_line() const
+{
+    GeoVector side1(p1_, p2_);
+    GeoVector side2(p1_, p3_);
+    GeoVector normal = side1.multiply_vectorially_by(side2);
+    return is_doubleZero(normal.xProj_) && is_doubleZero(normal.yProj_) && is_doubleZero(normal.zProj_);
+}
+
 // Проверка пересечения двух треугольников в 3D
 bool Triangle::intersect3D(Triangle& anotherTriangle)
 {
+    // вырожденные треугольники
+    if (is_line())
+    {
+        Line line{p1_, p1_.is_equalTo(p2_) ? p3_ : p2_};
+        Point intersection = line.intersect(anotherTriangle.p1_, anotherTriangle.p2_, anotherTriangle.p3_);
+        if (anotherTriangle.containsPoint(intersection)) return true;
+
+        return false;
+    }
+    if (anotherTriangle.is_line())
+    {
+        Line line{anotherTriangle.p1_, anotherTriangle.p1_.is_equalTo(anotherTriangle.p2_) ? anotherTriangle.p3_ : anotherTriangle.p2_};
+        Point intersection = line.intersect(p1_, p2_, p3_);
+        if (containsPoint(intersection)) return true;
+
+        return false;
+    }
 
     const Point& th_p1 = p1_;
     const Point& th_p2 = p2_;
