@@ -168,6 +168,8 @@ public:
     
     Line(GeoVector&& basis, const Point& point) : p_(point), basis_(basis) {}
 
+    Point intersect(const Point& p1, const Point& p2, const Point& p3) const;
+    
     Point intersect(const Line& anotherLine) const;
 
     bool is_parallelTo(const Line& anotherLine) const;
@@ -208,6 +210,7 @@ class Triangle
     bool isOnEdge(const Point& p);
     bool is_intersectAABB(const Triangle& anotherTriangle, detail::planes_t projPlane);
     bool is_intersectSAT(const Triangle& anotherTriangle, detail::planes_t projPlane);
+    bool is_line() const;
 
 
 public:
