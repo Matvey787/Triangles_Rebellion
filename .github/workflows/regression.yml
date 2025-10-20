@@ -17,7 +17,7 @@ jobs:
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y cmake g++ clang-tidy make
 
-      - name: Configure project (with sanitizers)
+      - name: Run cmake
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=ON -DBUILD_EXECUTABLE=OFF && cmake --build build
 
       - name: Run clang-tidy
