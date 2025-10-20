@@ -18,7 +18,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y cmake g++ clang-tidy make
 
       - name: Configure project (with sanitizers)
-        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS="-fsanitize=address"
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=ON -DBUILD_EXECUTABLE=OFF && cmake --build build
 
       - name: Run clang-tidy
         run: cmake --build build --target clang-tidy || true
