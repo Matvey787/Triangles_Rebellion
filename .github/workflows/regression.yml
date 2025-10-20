@@ -27,7 +27,7 @@ jobs:
         run: cmake --build build -- -j$(nproc)
 
       - name: Run regression tests
-        run: ./build/geo_tests || (echo "❌ Tests failed!" && exit 1)
+        run: ./build/geo_tests --gtest_output=xml:test-results.xml || (echo "❌ Tests failed!" && exit 1)
 
       - name: Upload test summary
         if: always()
@@ -35,4 +35,3 @@ jobs:
           echo "Test Summary" >> $GITHUB_STEP_SUMMARY
           echo "Build and tests finished at $(date)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          ./build/geo_tests --gtest_output=xml:test-results.xml || true
