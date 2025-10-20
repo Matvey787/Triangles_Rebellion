@@ -16,19 +16,26 @@ set(FETCH_LIBS_URLS
     https://github.com/google/googletest/archive/refs/tags/release-1.12.1.zip
 )
 
-include(FetchContent)
-foreach(libName libURL IN ZIP_LISTS FETCH_LIBS_NAMES FETCH_LIBS_URLS)
-    message(STATUS "Fetching library: ${libName}, URL: ${libURL}")
-    FetchContent_Declare(
-        ${libName}
-        URL ${libURL}
-    )
-    FetchContent_MakeAvailable(${libName})
-endforeach()
+find_package(GTest CONFIG QUIET)
+
+if(NOT GTest_FOUND)
+    message(STATUS "GTest not found, downloading via FetchContent...")
+    include(FetchContent)
+    foreach(libName libURL IN ZIP_LISTS FETCH_LIBS_NAMES FETCH_LIBS_URLS)
+        message(STATUS "Fetching library: ${libName}, URL: ${libURL}")
+        FetchContent_Declare(
+            ${libName}
+            URL ${libURL}
+        )
+        FetchContent_MakeAvailable(${libName})
+    endforeach()
+else()
+    message(STATUS "Using system GTest: ${GTest_DIR}")
+endif()
 
 add_executable(${TESTS_EXEC_FILE_NAME} ${LOCAL_SOURCE_FILES})
 
-target_link_libraries(${TESTS_EXEC_FILE_NAME} gtest gtest_main)
+target_link_libraries(${TESTS_EXEC_FILE_NAME} PRIVATE GTest::gtest GTest::gtest_main)
 target_include_directories(${TESTS_EXEC_FILE_NAME} PRIVATE ${LOCAL_INCLUDE_DIRECTORIES})
 
 include(CTest)
