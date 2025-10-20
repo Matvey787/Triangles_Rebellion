@@ -1,10 +1,20 @@
+# Сборка без юнит тестов
 # cmake -S . -B build && cmake --build build
 
-# ./build/out
+# Сборка с юнит тестами
+# cmake -S . -B build -DBUILD_TESTING=ON && cmake --build build
+
+# Сборка только юнит тестов
+# cmake -S . -B build -DBUILD_TESTING=ON -DBUILD_EXECUTABLE=OFF && cmake --build build
+
+# Запуск
+# ./build/...
+
+# Очистка
 # cmake --build build --target clean
+
+# Запуск ctest
 # ctest --test-dir build -V
-# g++ -g -O2 -fno-omit-frame-pointer your_program.cpp -o your_program
-# -DCMAKE_BUILD_TYPE=RelWithDebInfo
 
 # Запуск Google tests
 # ./build/geo_tests
@@ -12,81 +22,53 @@
 # Запуск Google tests с фильтром
 # ./build/geo_tests --gtest_filter="...*"
 
-cmake_minimum_required(VERSION 3.14)
-project(LIRS_Cache CXX)
+cmake_minimum_required(VERSION 3.17)
+project(LIRS_Cache LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-include(FetchContent)
-
-FetchContent_Declare(
-    googletest
-    URL https://github.com/google/googletest/archive/refs/tags/release-1.12.1.zip
-)
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(googletest)
-
-include_directories(${CMAKE_SOURCE_DIR}/inc)
-
-set(SOURCE_FILES
-    src/main.cpp
-    src/line.cpp
-    src/triangle.cpp
-    src/double.cpp
-    src/2dIntersection_Impl.cpp
-    src/3dIntersection_Impl.cpp
-)
+set(CXX_STANDARD "cxx_std_20")
 
 set(EXEC_FILE_NAME "out")
-add_executable(${EXEC_FILE_NAME} ${SOURCE_FILES})
-
-add_executable(geo_tests
-    tests/test_geo.cpp
-    src/line.cpp
-    src/triangle.cpp
-    src/double.cpp
-    src/2dIntersection_Impl.cpp
-    src/3dIntersection_Impl.cpp
+set(LOCAL_SOURCE_FILES
+    ${CMAKE_SOURCE_DIR}/src/main.cpp
+    ${CMAKE_SOURCE_DIR}/src/line.cpp
+    ${CMAKE_SOURCE_DIR}/src/triangle.cpp
+    ${CMAKE_SOURCE_DIR}/src/double.cpp
+    ${CMAKE_SOURCE_DIR}/src/2dIntersection_Impl.cpp
+    ${CMAKE_SOURCE_DIR}/src/3dIntersection_Impl.cpp
 )
 
-target_link_libraries(geo_tests gtest gtest_main)
-target_include_directories(geo_tests PRIVATE ${CMAKE_SOURCE_DIR}/inc)
+set(LOCAL_INCLUDE_DIRECTORIES
+    ${CMAKE_SOURCE_DIR}/inc
+)
 
-include(CTest)
-enable_testing()
+set(SANITIZER "-fsanitize=address,alignment,bool,bounds,enum,float-cast-overflow,float-divide-by-zero,integer-divide-by-zero,leak,nonnull-attribute,null,object-size,return,returns-nonnull-attribute,shift,signed-integer-overflow,undefined,unreachable,vla-bound,vptr")
+set(DEBUG_FLAGS ${SANITIZER} "-D _DEBUG -Wall -Wextra -Weffc++ -Waggressive-loop-optimizations -Wc++14-compat -Wmissing-declarations -Wcast-align -Wcast-qual -Wchar-subscripts -Wconditionally-supported -Wconversion -Wctor-dtor-privacy -Wempty-body -Wfloat-equal -Wformat-nonliteral -Wformat-security -Wformat-signedness -Wformat=2 -Winline -Wlogical-op -Wnon-virtual-dtor -Wopenmp-simd -Woverloaded-virtual -Wpacked -Wpointer-arith -Winit-self -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=2 -Wsuggest-attribute=noreturn -Wsuggest-final-methods -Wsuggest-final-types -Wsuggest-override -Wswitch-default -Wswitch-enum -Wsync-nand -Wundef -Wunreachable-code -Wunused -Wuseless-cast -Wvariadic-macros -Wno-literal-suffix -Wno-missing-field-initializers -Wno-narrowing -Wno-old-style-cast -Wno-varargs -Wstack-protector -fcheck-new -fsized-deallocation -fstack-protector -fstrict-overflow -flto-odr-type-merging -fno-omit-frame-pointer -Wlarger-than=81920 -Wstack-usage=81920 -pie -fPIE -Werror=vla")
 
-function(create_tests_from_pairs)
-    file(GLOB TEST_FILES ${CMAKE_SOURCE_DIR}/tests/test*.dat)
+set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} ${DEBUG_FLAGS}")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
 
-    if(!TEST_FILES)
-        message(WARNING "No test files found.")
-        return()
-    endif()
+option(BUILD_EXECUTABLE "Build executable" ON)
+option(BUILD_TESTING "Build tests" OFF)
 
-    foreach(TEST_FILE ${TEST_FILES})
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+    message(STATUS "No build type selected, defaulting to Debug")
+    set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build.")
+endif()
 
-        get_filename_component(TEST_NAME ${TEST_FILE} NAME_WE)
-        string(REGEX REPLACE "^test" "" TEST_NUMBER ${TEST_NAME})
-        
-        set(ANS_FILE ${CMAKE_SOURCE_DIR}/tests/ans${TEST_NUMBER}.dat)
-        
-        if(EXISTS ${ANS_FILE})
-            file(READ ${ANS_FILE} EXPECTED_OUTPUT)
-            string(STRIP "${EXPECTED_OUTPUT}" EXPECTED_OUTPUT)
-            
-            add_test(NAME test_${TEST_NUMBER}
-                COMMAND bash -c "../build/${EXEC_FILE_NAME} < test${TEST_NUMBER}.dat"
-                WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/tests
-            )
-            
-            set_tests_properties(test_${TEST_NUMBER} PROPERTIES
-                PASS_REGULAR_EXPRESSION "^${EXPECTED_OUTPUT}([ \t\n\r]|$)"
-            )
-        else()
-            message(WARNING "Answer file not found for test ${TEST_NUMBER}: ${ANS_FILE}")
-        endif()
-    endforeach()
-endfunction()
 
-create_tests_from_pairs()
+# ----------------------------------------------------------------------------------------
+
+
+if(BUILD_TESTING)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
+
+if(BUILD_EXECUTABLE)
+    add_executable(${EXEC_FILE_NAME} ${LOCAL_SOURCE_FILES})
+    target_include_directories(${EXEC_FILE_NAME} PRIVATE ${LOCAL_INCLUDE_DIRECTORIES})
+    target_compile_features(${EXEC_FILE_NAME} PRIVATE ${CXX_STANDARD})
+endif()
+
+
