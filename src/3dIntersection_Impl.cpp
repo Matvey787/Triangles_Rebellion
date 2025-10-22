@@ -45,7 +45,7 @@ bool Triangle::intersect3D(Triangle& anotherTriangle)
     {
         Line line{p1_, p1_.is_equalTo(p2_) ? p3_ : p2_};
         Point intersection = line.intersect(anotherTriangle.p1_, anotherTriangle.p2_, anotherTriangle.p3_);
-        if (anotherTriangle.containsPoint(intersection)) return true;
+        if (anotherTriangle.containsPoint(intersection) && containsPoint(intersection)) return true;
 
         return false;
     }
@@ -53,7 +53,7 @@ bool Triangle::intersect3D(Triangle& anotherTriangle)
     {
         Line line{anotherTriangle.p1_, anotherTriangle.p1_.is_equalTo(anotherTriangle.p2_) ? anotherTriangle.p3_ : anotherTriangle.p2_};
         Point intersection = line.intersect(p1_, p2_, p3_);
-        if (containsPoint(intersection)) return true;
+        if (containsPoint(intersection) && anotherTriangle.containsPoint(intersection)) return true;
 
         return false;
     }
@@ -72,7 +72,7 @@ bool Triangle::intersect3D(Triangle& anotherTriangle)
     double det2 = detail::signDeterminant(an_p1, an_p2, an_p3, th_p2);
     double det3 = detail::signDeterminant(an_p1, an_p2, an_p3, th_p3);
 
-    std::cout << det1 << " " << det2 << " " << det3 << "\n";
+    std::cout << "det1: " << det1 << ", det2: " << det2 << ", det3: " << det3 << "\n";
 
     if (is_az(det1, det2, det3) || is_bz(det1, det2, det3)) return false;
 
@@ -80,7 +80,7 @@ bool Triangle::intersect3D(Triangle& anotherTriangle)
     double det5 = detail::signDeterminant(th_p1, th_p2, th_p3, an_p2);
     double det6 = detail::signDeterminant(th_p1, th_p2, th_p3, an_p3);
 
-    std::cout << det4 << " " << det5 << " " << det6 << "\n";
+    std::cout << "det4: " << det4 << ", det5: " << det5 << ", det6: " << det6 << "\n";
 
     if (is_az(det4, det5, det6) || is_bz(det4, det5, det6)) return false;
 
@@ -109,7 +109,7 @@ bool Triangle::intersect3D(Triangle& anotherTriangle)
     Point* t1_v3 = &p3_;
     if ((is_az(det1) && is_bez(det2) && is_bez(det3)) || 
         (is_bz(det1) && is_aez(det2) && is_aez(det3))) {
-        std::cout << "p1 - изолированная вершина\n";
+        // std::cout << "p1 - изолированная вершина\n";
         if (is_bz(det1))
         {
             std::swap(t1_v2, t1_v3);
