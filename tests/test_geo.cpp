@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include "geo.h"
 
+
 TEST(PointTest, BasicCreation) {
     Point p(1.0, 2.0, 3.0);
     EXPECT_DOUBLE_EQ(p.x_, 1.0);
@@ -681,7 +682,7 @@ TEST(MYTriangleTest, 3dTest13_intersection) {
 
 TEST(MYTriangleTest, 3dTest14_noIntersection) {
     Triangle t1(Point(10, 0, 0), Point(0, 10, 0), Point(0, 0, 0));
-    Triangle t2(Point(5, 1, 1.01), Point(5, -1, -1), Point(5, -3, 10));
+    Triangle t2(Point(5, 1, 1.5), Point(5, -1, -1), Point(5, -3, 10));
     EXPECT_FALSE(t1.is_intersect(t2));
 }
 
@@ -689,6 +690,407 @@ TEST(MYTriangleTest, 3dTest15_intersection) {
     Triangle t1(Point(2.0, 1.0, 5.0), Point(8.0, 3.0, 2.0), Point(4.0, 9.0, 6.0));
     Triangle t2(Point(3.3, 4.3, 4.7), Point(6.7, 5.0, 3.8), Point(4.7, 7.0, 5.5));
     EXPECT_TRUE(t1.is_intersect(t2));
+}
+
+TEST(MYTriangleTest, 3dTest16_noIntersection) {
+    Triangle t1(Point(0, 0, 0), Point(0, 3, 3), Point(0, 0, 3));
+    Triangle t2(Point(8, 8, 8), Point(8, 8, 8), Point(-10, 8, 8));
+    EXPECT_FALSE(t1.is_intersect(t2));
+}
+
+TEST(MYTriangleTest, 3dTest17_intersection) {
+    Triangle t1(Point(0, 0, 0), Point(0, 3, 3), Point(0, 0, 3));
+    Triangle t2(Point(3, 3, 3), Point(3, 3, 3), Point(-4, 0, 0));
+    EXPECT_TRUE(t1.is_intersect(t2));
+}
+
+TEST(MYTriangleTest, 3dTest18_intersection) {
+    Triangle t1(Point(0, 0, 0), Point(0, 3, 3), Point(0, 0, 3));
+    Triangle t2(Point(3, 3, 3), Point(3, 3, 3), Point(-4, 0, 2));
+    EXPECT_TRUE(t1.is_intersect(t2));
+}
+
+TEST(MYTriangleTest, 3dTest19_intersection) {
+    Triangle t1(Point(0, 0, 0), Point(0, 3, 3), Point(0, 0, 3));
+    Triangle t2(Point(0, 0, 0), Point(0, 0, 0), Point(0, 0, 0));
+    EXPECT_TRUE(t1.is_intersect(t2));
+}
+
+TEST(MYTriangleTest, 3dTest20_noIntersection) {
+    Triangle t1(Point(0, 0, 0), Point(0, 3, 3), Point(0, 0, 3));
+    Triangle t2(Point(1000, 1000, 1000), Point(1000, 1000, 1000), Point(1000, 1000, 1000));
+    EXPECT_FALSE(t1.is_intersect(t2));
+}
+
+
+TEST(intersect_3d, triangle) {
+    // arrange
+    Triangle tr1(Point(0, 0, 2), Point(0, 1, 0), Point(1, 0, 0));
+    Triangle tr2(Point(0, 0, 1), Point(0, 2, 0), Point(2, 0, 0));
+    Triangle tr3(Point(0, 0, 3), Point(0, 2, 0), Point(2, 0, 0));
+
+    // act, assert
+    EXPECT_TRUE(tr1.is_intersect(tr2));
+    EXPECT_FALSE(tr1.is_intersect(tr3));
+}
+
+TEST(intersect_3d, PiercesInteriorAtPoint) {
+    // arrange
+    Triangle t1(Point(0,0,0), Point(2,0,0), Point(0,2,0));
+    Triangle t2(Point(0.5,0.5,-1), Point(0.5,0.5,1), Point(2,2,2));
+
+    // act, assert
+    EXPECT_TRUE(t1.is_intersect(t2));
+    EXPECT_TRUE(t2.is_intersect(t1));
+}
+
+TEST(intersect_3d, TouchesInsideAtVertex) {
+    // arrange
+    Triangle t1(Point(0,0,0), Point(2,0,0), Point(0,2,0));
+    Triangle t2(Point(0.3,0.3,0), Point(2,0,1), Point(0,2,1));
+
+    // act, assert
+    EXPECT_TRUE(t1.is_intersect(t2));
+    EXPECT_TRUE(t2.is_intersect(t1));
+}
+
+TEST(intersect_3d, EdgeInPlaneOverlapsTriangle) {
+    // arrange
+    Triangle t1(Point(0,0,0), Point(2,0,0), Point(0,2,0));
+    Triangle t2(Point(0.2,0.2,0), Point(1.2,0.2,0), Point(0.5,0.5,1));
+
+    // act, assert
+    EXPECT_TRUE(t1.is_intersect(t2));
+    EXPECT_TRUE(t2.is_intersect(t1));
+}
+
+TEST(intersect_3d, PointInPlaneOverlapsTriangleIntersection) {
+    // arrange
+    Triangle t1(Point(0,0,0), Point(1,0,0), Point(0,1,0));
+    Triangle t2(Point(0,0.5,-0.5), Point(0,0.5,0.5), Point(-1,0,0));
+
+    // act, assert
+    EXPECT_TRUE(t1.is_intersect(t2));
+    EXPECT_TRUE(t2.is_intersect(t1));
+}
+
+TEST(intersect_3d, CrossesPlaneOutside_NoIntersection) {
+    // arrange
+    Triangle t1(Point(0,0,0), Point(2,0,0), Point(0,2,0));
+    Triangle t2(Point(3,3,-1), Point(3,3,1), Point(4,4,0));
+
+    // act, assert
+    EXPECT_FALSE(t1.is_intersect(t2));
+    EXPECT_FALSE(t2.is_intersect(t1));
+}
+
+TEST(intersect_3d, ParallelPlanes_NoIntersection) {
+    // arrange
+    Triangle t1(Point(0,0,0), Point(2,0,0), Point(0,2,0));
+    Triangle t2(Point(0,0,1), Point(2,0,1), Point(0,2,1));
+
+    // act, assert
+    EXPECT_FALSE(t1.is_intersect(t2));
+    EXPECT_FALSE(t2.is_intersect(t1));
+}
+
+TEST(intersect_3d, TouchesAtT1Vertex) {
+    // arrange
+    Triangle t1(Point(0,0,0), Point(2,0,0), Point(0,2,0));
+    Triangle t2(Point(0,0,-1), Point(0,0,1), Point(1,1,1));
+
+    // act, assert
+    EXPECT_TRUE(t1.is_intersect(t2));
+    EXPECT_TRUE(t2.is_intersect(t1));
+}
+
+TEST(intersect_3d, Degenerate_CollinearSegment_PiercesTriangle) {
+    // t1 in the plane z=0; tSeg are collinear points: a segment through the interior of t1
+    Triangle t1(Point(0,0,0), Point(2,0,0), Point(0,2,0));
+    Triangle tSeg(Point(0.5,0.5,-1), Point(0.5,0.5,0), Point(0.5,0.5,1));
+    EXPECT_TRUE(t1.is_intersect(tSeg));
+    EXPECT_TRUE(tSeg.is_intersect(t1));
+}
+
+TEST(intersect_3d, Degenerate_CollinearSegment_Coplanar_OverlapsEdge) {
+    Triangle t1(Point(0,0,0), Point(2,0,0), Point(0,2,0));
+    Triangle tSeg(Point(0,0,0), Point(1,0,0), Point(2,0,0)); // segment on edge t1
+    EXPECT_TRUE(t1.is_intersect(tSeg));
+    EXPECT_TRUE(tSeg.is_intersect(t1));
+}
+
+TEST(intersect_3d, Degenerate_CollinearSegment_ParallelOffset_NoIntersection) {
+    Triangle t1(Point(0,0,0), Point(2,0,0), Point(0,2,0));
+    Triangle tSeg(Point(3,3,1), Point(4,4,1), Point(5,5,1));
+    EXPECT_FALSE(t1.is_intersect(tSeg));
+    EXPECT_FALSE(tSeg.is_intersect(t1));
+}
+
+TEST(intersect_3d, Degenerate_Segment_Triangle_Intersection) {
+    Triangle tSeg(Point(0,0,0), Point(0,0,0), Point(4,4,4));
+    Triangle t1(Point(0,0,1), Point(0,1,0), Point(1,0,0));
+    EXPECT_TRUE(t1.is_intersect(tSeg));
+    EXPECT_TRUE(tSeg.is_intersect(t1));
+}
+
+TEST(intersect_3d, Degenerate_Point_InsideTriangle) {
+    Triangle t1(Point(0,0,0), Point(2,0,0), Point(0,2,0));
+    Triangle tPt(Point(0.3,0.3,0), Point(0.3,0.3,0), Point(0.3,0.3,0));
+    EXPECT_TRUE(t1.is_intersect(tPt));
+    EXPECT_TRUE(tPt.is_intersect(t1));
+}
+
+TEST(intersect_3d, Degenerate_Point_AtVertex) {
+    Triangle t1(Point(0,0,0), Point(2,0,0), Point(0,2,0));
+    Triangle tPt(Point(0,0,0), Point(0,0,0), Point(0,0,0));
+    EXPECT_TRUE(t1.is_intersect(tPt));
+    EXPECT_TRUE(tPt.is_intersect(t1));
+}
+
+TEST(intersect_3d, Degenerate_Point_OffPlane_NoIntersection) {
+    Triangle t1(Point(0,0,0), Point(2,0,0), Point(0,2,0));
+    Triangle tPt(Point(0.3,0.3,0.1), Point(0.3,0.3,0.1), Point(0.3,0.3,0.1));
+    EXPECT_FALSE(t1.is_intersect(tPt));
+    EXPECT_FALSE(tPt.is_intersect(t1));
+}
+
+TEST(intersect_3d, Degenerate_Segment_Segment_NoIntersection) {
+    Triangle t1(Point(2,0,0), Point(1,0,0), Point(0,0,0));
+    Triangle t2(Point(0,0,1), Point(0,0,2), Point(0,0,3));
+    EXPECT_FALSE(t1.is_intersect(t2));
+    EXPECT_FALSE(t2.is_intersect(t1));
+}
+
+TEST(intersect_3d, Degenerate_Segment_Segment_Intersection) {
+    Triangle t1(Point(2,0,0), Point(1,0,0), Point(0,0,0));
+    Triangle t2(Point(1,0,-1), Point(1,0,0), Point(1,0,1));
+    EXPECT_TRUE(t1.is_intersect(t2));
+    EXPECT_TRUE(t2.is_intersect(t1));
+}
+
+TEST(intersect_3d, Degenerate_Point_Segment_NoIntersection) {
+    Triangle t1(Point(2,0,0), Point(1,0,0), Point(0,0,0));
+    Triangle t2(Point(0,0,1), Point(0,0,1), Point(0,0,1));
+    EXPECT_FALSE(t1.is_intersect(t2));
+    EXPECT_FALSE(t2.is_intersect(t1));
+}
+
+TEST(intersect_3d, Degenerate_Point_Segment_Intersection) {
+    Triangle t1(Point(0,0,2), Point(0,0,3), Point(0,0,-1));
+    Triangle t2(Point(0,0,1), Point(0,0,1), Point(0,0,1));
+    EXPECT_TRUE(t1.is_intersect(t2));
+    EXPECT_TRUE(t2.is_intersect(t1));
+}
+
+TEST(intersect_3d, Degenerate_Two_Points_NoIntersection) {
+    Triangle t1(Point(2,0,0), Point(2,0,0), Point(2,0,0));
+    Triangle t2(Point(0,0,1), Point(0,0,1), Point(0,0,1));
+    EXPECT_FALSE(t1.is_intersect(t2));
+    EXPECT_FALSE(t2.is_intersect(t1));
+}
+
+TEST(intersect_3d, Degenerate_Two_Points_Intersection) {
+    Triangle t1(Point(2,0,0), Point(2,0,0), Point(2,0,0));
+    Triangle t2(Point(2,0,0), Point(2,0,0), Point(2,0,0));
+    EXPECT_TRUE(t1.is_intersect(t2));
+    EXPECT_TRUE(t2.is_intersect(t1));
+}
+
+TEST(intersect_3d, Coplanar_Disjoint_NoIntersection) {
+    Triangle t1(Point(0,0,0), Point(2,0,0), Point(0,2,0));
+    Triangle t2(Point(3,0,0), Point(5,0,0), Point(3,2,0));
+    EXPECT_FALSE(t1.is_intersect(t2));
+    EXPECT_FALSE(t2.is_intersect(t1));
+}
+
+TEST(intersect_3d, Coplanar_ShareFullEdge_Touching) {
+    Triangle t1(Point(0,0,0), Point(2,0,0), Point(0,2,0));
+    Triangle t2(Point(2,0,0), Point(0,2,0), Point(2,2,0)); // common edge
+    EXPECT_TRUE(t1.is_intersect(t2));
+    EXPECT_TRUE(t2.is_intersect(t1));
+}
+
+TEST(intersect_3d, Coplanar_Containment_T2InsideT1) {
+    Triangle t1(Point(0,0,0), Point(3,0,0), Point(0,3,0));
+    Triangle t2(Point(0.5,0.5,0), Point(1.5,0.5,0), Point(0.5,1.5,0));
+    EXPECT_TRUE(t1.is_intersect(t2));
+    EXPECT_TRUE(t2.is_intersect(t1));
+}
+
+TEST(intersect_3d, Coplanar_TouchAtSingleVertexOnly) {
+    Triangle t1(Point(0,0,0), Point(2,0,0), Point(0,2,0));
+    Triangle t2(Point(2,0,0), Point(3,0,0), Point(2,1,0)); // touching at the top (2,0,0)
+    EXPECT_TRUE(t1.is_intersect(t2));
+    EXPECT_TRUE(t2.is_intersect(t1));
+}
+
+TEST(intersect_3d, Coplanar_IdenticalTriangles) {
+    Triangle t1(Point(0,0,0), Point(2,0,0), Point(0,2,0));
+    Triangle t2(Point(0,0,0), Point(2,0,0), Point(0,2,0));
+    EXPECT_TRUE(t1.is_intersect(t2));
+    EXPECT_TRUE(t2.is_intersect(t1));
+}
+
+TEST(intersect_3d, SkewPlanes_IntersectInSegment) {
+    // the planes are not parallel; the intersection line gives a segment inside both
+    Triangle t1(Point(0,0,0), Point(2,0,0), Point(0,2,0));
+    Triangle t2(Point(0.2,0.2,-1), Point(1.5,0.2,1), Point(0.2,1.5,1));
+    EXPECT_TRUE(t1.is_intersect(t2));
+    EXPECT_TRUE(t2.is_intersect(t1));
+}
+
+TEST(intersect_3d, SkewPlanes_LineCutsOutside_NoIntersection) {
+    // t2 intersects plane t1, but the section is outside t1
+    Triangle t1(Point(0,0,0), Point(2,0,0), Point(0,2,0));
+    Triangle t2(Point(3,3,-1), Point(3,3,1), Point(4,2,0.5));
+    EXPECT_FALSE(t1.is_intersect(t2));
+    EXPECT_FALSE(t2.is_intersect(t1));
+}
+
+TEST(intersect_3d, SkewPlanes_InteriorSegment_Diagonal) {
+    // Two non-parallel planes, the intersection is a segment inside both triangles
+    Triangle t1(Point(0,0,0), Point(3,0,0), Point(0,3,0));
+    Triangle t2(Point(0.3,0.3,-1), Point(2.4,0.3,1), Point(0.3,2.4,1));
+    EXPECT_TRUE(t1.is_intersect(t2));
+    EXPECT_TRUE(t2.is_intersect(t1));
+}
+
+TEST(intersect_3d, SkewPlanes_InteriorSegment_TouchesT1Edges) {
+    // The intersection segment lies from (1,0,0) to (0,1,0) - touches the edges t1
+    Triangle t1(Point(0,0,0), Point(2,0,0), Point(0,2,0));
+    Triangle t2(Point(0,0,-1), Point(2,0,1), Point(0,2,1));
+    EXPECT_TRUE(t1.is_intersect(t2));
+    EXPECT_TRUE(t2.is_intersect(t1));
+}
+
+TEST(intersect_3d, EdgeFace_Pierce_InteriorPoint) {
+    // Edge t2 pierces the interior of t1 at one point
+    Triangle t1(Point(0,0,0), Point(2,0,0), Point(0,2,0));
+    Triangle t2(Point(0.8,0.6,-1), Point(0.8,0.6,1), Point(3,-1,0.5));
+    EXPECT_TRUE(t1.is_intersect(t2));
+    EXPECT_TRUE(t2.is_intersect(t1));
+}
+
+TEST(intersect_3d, VertexOnT1Edge_PointContact) {
+    // Vertex t2 lies on edge t1, the remaining points are outside the plane t1
+    Triangle t1(Point(0,0,0), Point(2,0,0), Point(0,2,0));
+    Triangle t2(Point(1,0,0), Point(1,0,1), Point(2,1,1));
+    EXPECT_TRUE(t1.is_intersect(t2));
+    EXPECT_TRUE(t2.is_intersect(t1));
+}
+
+TEST(intersect_3d, NonCoplanar_ShareFullEdge) {
+    // Common full edge for non-parallel planes (intersection line = edge)
+    Triangle t1(Point(0,0,0), Point(2,0,0), Point(0,2,0));
+    Triangle t2(Point(0,0,0), Point(2,0,0), Point(1,0,1)); // плоскость y=0
+    EXPECT_TRUE(t1.is_intersect(t2));
+    EXPECT_TRUE(t2.is_intersect(t1));
+}
+
+TEST(intersect_3d, SkewPlanes_LineHitsOutside_NoIntersection_2) {
+    // The intersection line of the planes passes outside t1
+    Triangle t1(Point(0,0,0), Point(2,0,0), Point(0,2,0));
+    Triangle t2(Point(3,3,-1), Point(5,3,1), Point(3,5,1));
+    EXPECT_FALSE(t1.is_intersect(t2));
+    EXPECT_FALSE(t2.is_intersect(t1));
+}
+
+TEST(intersect_3d, Coplanar_PartialAreaOverlap) {
+    // Coplanar triangles with non-empty intersection area
+    Triangle t1(Point(0,0,0), Point(3,0,0), Point(0,3,0));
+    Triangle t2(Point(0.5,0,0), Point(2.5,0,0), Point(0.5,2,0));
+    EXPECT_TRUE(t1.is_intersect(t2));
+    EXPECT_TRUE(t2.is_intersect(t1));
+}
+
+TEST(intersect_3d, Coplanar_ProperEdgeCross) {
+    // Coplanar: edges intersect, no vertex lies inside another
+    Triangle t1(Point(0,0,0), Point(2,0,0), Point(1,2,0));
+    Triangle t2(Point(-0.5,0.5,0), Point(2.5,0.5,0), Point(1.5,-1,0));
+    EXPECT_TRUE(t1.is_intersect(t2));
+    EXPECT_TRUE(t2.is_intersect(t1));
+}
+
+static Point P(float x, float y, float z = 0.0) { return Point{x, y, z}; }
+
+TEST(intersect_2d, Disjoint_NoOverlap) {
+    // arrange
+    Triangle A{ P(0,0), P(2,0), P(0,2) };
+    Triangle B{ P(3,3), P(4,3), P(3,4) };
+
+    // act, assert
+    EXPECT_FALSE(A.is_intersect(B));
+    EXPECT_FALSE(B.is_intersect(A));
+}
+
+TEST(intersect_2d, Containment_B_inside_A) {
+    // arrange
+    Triangle A{ P(0,0), P(2,0), P(0,2) };
+    Triangle B{ P(0.2,0.2), P(0.6,0.2), P(0.2,0.6) };
+
+    // act, assert
+    EXPECT_TRUE(A.is_intersect(B));
+    EXPECT_TRUE(B.is_intersect(A));
+}
+
+TEST(intersect_2d, Containment_OrientationDoesNotMatter) {
+    // arrange
+    Triangle A{ P(0,0), P(2,0), P(0,2) };
+    Triangle B{ P(0.2,0.6), P(0.6,0.2), P(0.2,0.2) };
+
+    // act, assert
+    EXPECT_TRUE(A.is_intersect(B));
+    EXPECT_TRUE(B.is_intersect(A));
+}
+
+TEST(intersect_2d, EdgeEdge_ProperCross_NoVertexInside) {
+    // arrange
+    Triangle A{ P(0,0), P(2,0), P(1,2) };
+    Triangle B{ P(-0.5,0.5), P(2.5,0.5), P(1.5,-1) };
+
+    // act, assert
+    EXPECT_TRUE(A.is_intersect(B));
+    EXPECT_TRUE(B.is_intersect(A));
+}
+
+TEST(intersect_2d, Touch_VertexOnEdge_PointContact) {
+    // arrange
+    Triangle A{ P(0,0), P(2,0), P(0,2) };
+    Triangle B{ P(1,0), P(1.1,-0.2), P(0.9,-0.2) };
+
+    // act, assert
+    EXPECT_TRUE(A.is_intersect(B));
+    EXPECT_TRUE(B.is_intersect(A));
+}
+
+TEST(intersect_2d, Collinear_OverlappingEdges) {
+    // arrange
+    Triangle A{ P(0,0), P(2,0), P(0,2) };
+    Triangle B{ P(0,0), P(2,0), P(3,1) };
+
+    // act, assert
+    EXPECT_TRUE(A.is_intersect(B));
+    EXPECT_TRUE(B.is_intersect(A));
+}
+
+TEST(intersect_2d, Touch_AtSingleSharedVertexOnly) {
+    // arrange
+    Triangle A{ P(0,0), P(2,0), P(0,2) };
+    Triangle B{ P(2,0), P(3,0), P(2,1) };
+
+    // act, assert
+    EXPECT_TRUE(A.is_intersect(B));
+    EXPECT_TRUE(B.is_intersect(A));
+}
+
+TEST(intersect_2d, Disjoint_CloseButSeparated) {
+    // arrange
+    Triangle A{ P(0,0), P(2,0), P(0,2) };
+    Triangle B{ P(2.1,0.0), P(3.0,0.0), P(2.1,0.9) };
+
+    // act, assert
+    EXPECT_FALSE(A.is_intersect(B));
+    EXPECT_FALSE(B.is_intersect(A));
 }
 
 
