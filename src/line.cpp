@@ -33,6 +33,7 @@ Point Line::intersect(const Point& p1, const Point& p2, const Point& p3) const {
     };
 }
 
+
 Point Line::intersect(const Line& anotherLine) const
 {
     // Проверка на параллельность

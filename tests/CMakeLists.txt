@@ -4,8 +4,8 @@ set(LOCAL_SOURCE_FILES
     ${CMAKE_SOURCE_DIR}/src/line.cpp
     ${CMAKE_SOURCE_DIR}/src/triangle.cpp
     ${CMAKE_SOURCE_DIR}/src/double.cpp
-    ${CMAKE_SOURCE_DIR}/src/2dIntersection_Impl.cpp
-    ${CMAKE_SOURCE_DIR}/src/3dIntersection_Impl.cpp
+    ${CMAKE_SOURCE_DIR}/src/2d.cpp
+    ${CMAKE_SOURCE_DIR}/src/3d.cpp
 )
 set(LOCAL_INCLUDE_DIRECTORIES ${CMAKE_SOURCE_DIR}/inc)
 

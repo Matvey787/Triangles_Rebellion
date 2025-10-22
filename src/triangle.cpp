@@ -3,119 +3,96 @@
 #include <iostream>
 #include <algorithm>
 
-using namespace Geo;
-
-Line Triangle::findIntersectLine(Triangle& anotherTriangle)
+/// @brief Определяет положение точки p относительно плоскости, заданной точками plane_p1, plane_p2, plane_p3
+/// @param plane_p1 Первая точка плоскости
+/// @param plane_p2 Вторая точка плоскости
+/// @param plane_p3 Третья точка плоскости
+/// @param p Точка, положение которой нужно определить
+static double signDeterminant(const Geo::Point& plane_p1,
+                       const Geo::Point& plane_p2,
+                       const Geo::Point& plane_p3,
+                       const Geo::Point& p)
 {
-    // считаем нормали к плоскостям треугольников
-    GeoVector l1b = l1_.getBasis();
-    GeoVector l2b = l2_.getBasis();
-    GeoVector normal1 = l1b.multiply_vectorially_by(l2b);
+    double v1x = plane_p1.x_ - p.x_;
+    double v1y = plane_p1.y_ - p.y_;
+    double v1z = plane_p1.z_ - p.z_;
 
-    GeoVector l1b_anotherT = anotherTriangle.l1_.getBasis();
-    GeoVector l2b_anotherT = anotherTriangle.l2_.getBasis();
-    GeoVector normal2 = l1b_anotherT.multiply_vectorially_by(l2b_anotherT);
+    double v2x = plane_p2.x_ - p.x_;
+    double v2y = plane_p2.y_ - p.y_;
+    double v2z = plane_p2.z_ - p.z_;
 
-    // направление линии пересечения — векторное произведение нормалей
-    GeoVector intersectionBasis = normal1.multiply_vectorially_by(normal2);
+    double v3x = plane_p3.x_ - p.x_;
+    double v3y = plane_p3.y_ - p.y_;
+    double v3z = plane_p3.z_ - p.z_;
 
-    // коэффициенты уравнений плоскостей
-    double a1 = normal1.xProj_;
-    double b1 = normal1.yProj_;
-    double c1 = normal1.zProj_;
-    double d1 = - (a1 * p1_.x_ + b1 * p1_.y_ + c1 * p1_.z_);
+    double det =
+        v1x * (v2y * v3z - v2z * v3y) -
+        v1y * (v2x * v3z - v2z * v3x) +
+        v1z * (v2x * v3y - v2y * v3x);
 
-    double a2 = normal2.xProj_;
-    double b2 = normal2.yProj_;
-    double c2 = normal2.zProj_;
-    double d2 = - (a2 * anotherTriangle.p1_.x_ + b2 * anotherTriangle.p1_.y_ + c2 * anotherTriangle.p1_.z_);
-
-    // пробуем найти точку на линии пересечения
-    double x = 0, y = 0, z = 0;
-
-    double mainDet1 = b1 * c2 - b2 * c1; // x = 0
-    double mainDet2 = a1 * c2 - a2 * c1; // y = 0
-    double mainDet3 = a1 * b2 - a2 * b1; // z = 0
-
-    if (!is_z(mainDet1)) // x = 0
-    {
-        y = (-d1 * c2 + d2 * c1) / mainDet1;
-        z = (-b1 * d2 + b2 * d1) / mainDet1;
-        return Line(intersectionBasis, Point(0, y, z));
-    }
-    else if (!is_z(mainDet2)) // y = 0
-    {
-        x = (-d1 * c2 + d2 * c1) / mainDet2;
-        z = (-a1 * d2 + a2 * d1) / mainDet2;
-        return Line(intersectionBasis, Point(x, 0, z));
-    }
-    else if (!is_z(mainDet3)) // z = 0
-    {
-        x = (-d1 * b2 + d2 * b1) / mainDet3;
-        y = (-a1 * d2 + a2 * d1) / mainDet3;
-        return Line(intersectionBasis, Point(x, y, 0));
-    }
-
-    // если все определители нулевые то это вообще не к нам :)
-    return Line(intersectionBasis, Point(NAN, NAN, NAN));
+    return det;
 }
 
-bool Triangle::containsPoint(const Point& P) {
-    if (std::isnan(P.x_) || std::isnan(P.y_) || std::isnan(P.z_)) return false;
-    GeoVector vector1(p2_, p1_);
-    GeoVector vector2(p3_, p1_);
-    GeoVector normal = vector1.multiply_vectorially_by(vector2);
+namespace Geo {
 
-    enum class Plane { XY, XZ, YZ } projPlane;
+bool Triangle::containsPoint(const Point& P)
+{
+    if (std::isnan(P.x_) || std::isnan(P.y_) || std::isnan(P.z_))
+        return false;
 
-    double ax = std::abs(normal.xProj_);
-    double ay = std::abs(normal.yProj_);
-    double az = std::abs(normal.zProj_);
+    GeoVector v1(p2_, p1_);
+    GeoVector v2(p3_, p1_);
+    GeoVector normal = v1.multiply_vectorially_by(v2);
 
-    if (ax >= ay && ax >= az)
-        projPlane = Plane::YZ;
-    else if (ay >= ax && ay >= az)
-        projPlane = Plane::XZ;
-    else
-        projPlane = Plane::XY;
+    detail::planes_t projPlane = detail::findProjectionPlane(normal);
 
-    double u1, v1, u2, v2, u3, v3, up, vp;
+    double u1 = 0;
+    double v1_ = 0;
+    double u2 = 0;
+    double v2_ = 0;
+    double u3 = 0;
+    double v3_ = 0;
+    double up = 0;
+    double vp = 0;
 
     switch (projPlane) {
-        case Plane::XY:
-            u1 = p1_.x_; v1 = p1_.y_;
-            u2 = p2_.x_; v2 = p2_.y_;
-            u3 = p3_.x_; v3 = p3_.y_;
+        case detail::planes_t::XY:
+            u1 = p1_.x_; v1_ = p1_.y_;
+            u2 = p2_.x_; v2_ = p2_.y_;
+            u3 = p3_.x_; v3_ = p3_.y_;
             up = P.x_; vp = P.y_;
             break;
-        case Plane::XZ:
-            u1 = p1_.x_; v1 = p1_.z_;
-            u2 = p2_.x_; v2 = p2_.z_;
-            u3 = p3_.x_; v3 = p3_.z_;
+        case detail::planes_t::XZ:
+            u1 = p1_.x_; v1_ = p1_.z_;
+            u2 = p2_.x_; v2_ = p2_.z_;
+            u3 = p3_.x_; v3_ = p3_.z_;
             up = P.x_; vp = P.z_;
             break;
-        case Plane::YZ:
-            u1 = p1_.y_; v1 = p1_.z_;
-            u2 = p2_.y_; v2 = p2_.z_;
-            u3 = p3_.y_; v3 = p3_.z_;
+        case detail::planes_t::YZ:
+            u1 = p1_.y_; v1_ = p1_.z_;
+            u2 = p2_.y_; v2_ = p2_.z_;
+            u3 = p3_.y_; v3_ = p3_.z_;
             up = P.y_; vp = P.z_;
             break;
     }
 
-    // ориентированный детерминант для 2D треугольника
-    auto orient = [](double ax, double ay, double bx, double by, double cx, double cy) {
-        return (bx - ax) * (cy - ay) - (by - ay) * (cx - ax);
-    };
+    double area  = (u2 - u1)*(v3_ - v1_) - (v2_ - v1_)*(u3 - u1);
+    double area1 = (u2 - up)*(v3_ - vp) - (v2_ - vp)*(u3 - up);
+    double area2 = (u3 - up)*(v1_ - vp) - (v3_ - vp)*(u1 - up);
+    double area3 = (u1 - up)*(v2_ - vp) - (v1_ - vp)*(u2 - up);
 
-    double d1 = orient(u1, v1, u2, v2, up, vp);
-    double d2 = orient(u2, v2, u3, v3, up, vp);
-    double d3 = orient(u3, v3, u1, v1, up, vp);
-
-    bool has_neg = (d1 < 0) || (d2 < 0) || (d3 < 0);
-    bool has_pos = (d1 > 0) || (d2 > 0) || (d3 > 0);
-
-    return !(has_neg && has_pos);
+    bool sameSign = ((is_aez(area) && is_aez(area1, area2, area3)) ||
+                     (is_bez(area) && is_bez(area1, area2, area3)));
+    if (is_z(signDeterminant(p1_, p2_, p3_, P)))
+    {
+        return sameSign;
+    }
+    else
+    {
+        return false;
+    }
 }
+
 
 
 bool Triangle::is_parallelTo(Triangle& anotherTriangle) {
@@ -132,7 +109,32 @@ bool Triangle::is_parallelTo(Triangle& anotherTriangle) {
 
 bool Triangle::is_intersect(Triangle& anotherTriangle)
 {
+    bool is_point1 = p1_.is_equalTo(p2_) && p2_.is_equalTo(p3_);
+    bool is_point2 = anotherTriangle.p1_.is_equalTo(anotherTriangle.p2_) && anotherTriangle.p2_.is_equalTo(anotherTriangle.p3_);
+
+    if (is_point1 && is_point2)
+    {
+        return p1_.is_equalTo(anotherTriangle.p1_);
+    }
+    if (is_point1)
+    {
+        if (anotherTriangle.is_line())
+            return p1_.is_among(anotherTriangle.p1_, anotherTriangle.p2_) ||
+                   p1_.is_among(anotherTriangle.p2_, anotherTriangle.p3_) ||
+                   p1_.is_among(anotherTriangle.p3_, anotherTriangle.p1_);
+        return anotherTriangle.containsPoint(p1_);
+    }
+    if (is_point2)
+    {
+        if (is_line())
+            return anotherTriangle.p1_.is_among(p1_, p2_) ||
+                   anotherTriangle.p2_.is_among(p2_, p3_) ||
+                   anotherTriangle.p3_.is_among(p3_, p1_);
+        return containsPoint(anotherTriangle.p1_);
+    }
+    
     if (this->is_parallelTo(anotherTriangle)) return intersect2D(anotherTriangle);
 
     return intersect3D(anotherTriangle);
 }
+}; // namespace Geo

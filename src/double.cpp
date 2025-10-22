@@ -14,7 +14,6 @@ bool is_z(double num1, double num2, double num3)
     return std::abs(num1) < EPSILON && std::abs(num2) < EPSILON && std::abs(num3) < EPSILON;
 }
 
-
 // above zero
 bool is_az(double num1, double num2, double num3)
 {
@@ -42,7 +41,6 @@ bool is_aez(double num1, double num2, double num3)
            (num3 > EPSILON || std::abs(num3) < EPSILON);
 }
 
-
 // below zero
 bool is_bz(double num1, double num2, double num3)
 {
@@ -54,6 +52,7 @@ bool is_bz(double num1, double num2, double num3)
 
     return num1 < -EPSILON && num2 < -EPSILON && num3 < -EPSILON;
 }
+
 // below or equal zero
 bool is_bez(double num1, double num2, double num3)
 {

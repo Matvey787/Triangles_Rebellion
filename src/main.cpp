@@ -3,6 +3,7 @@
 #include <sstream>
 #include <algorithm>
 #include "geo.h"
+#include "bvh.hpp"
 
 int main()
 {
@@ -51,33 +52,28 @@ int main()
         );
     }
 
-    size_t intersects = 0;
+    BVH::BVH bvh(triangles);
 
     std::set<size_t> intersectsTriangles;
 
     for (size_t i = 0; i < n; i++)
     {
-        for (size_t j = i + 1; j < n; j++)
+        std::vector<size_t> candidates;
+        bvh.potentialOverlaps(i, candidates);
+
+        for (size_t j : candidates)
         {
+            if (j <= i) continue;
             if (triangles[i].is_intersect(triangles[j]))
             {
-                // std::cout << "Intersection found between triangle " << triangles[i] << " and triangle " << triangles[j] << "[ " << i << ", " << j << " ]" << std::endl;
                 intersectsTriangles.insert(i);
                 intersectsTriangles.insert(j);
             }
         }
-
-        if (i == 1858)
-        {
-            std::cout << "Intersection not found between triangle " << triangles[i] << std::endl;
-        }
-        if (i == 6556)
-        {
-            std::cout << "Intersection not found between triangle " << triangles[i] << std::endl;
-        }
     }
-    for (const auto& element : intersectsTriangles)
-        std::cout << element << std::endl;
+
+    for (auto idx : intersectsTriangles)
+        std::cout << idx << std::endl;
         
     return 0;
 }
