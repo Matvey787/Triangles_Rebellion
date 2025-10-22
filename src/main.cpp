@@ -56,13 +56,26 @@ int main()
     std::set<size_t> intersectsTriangles;
 
     for (size_t i = 0; i < n; i++)
+    {
         for (size_t j = i + 1; j < n; j++)
+        {
             if (triangles[i].is_intersect(triangles[j]))
             {
                 // std::cout << "Intersection found between triangle " << triangles[i] << " and triangle " << triangles[j] << "[ " << i << ", " << j << " ]" << std::endl;
                 intersectsTriangles.insert(i);
                 intersectsTriangles.insert(j);
             }
+        }
+
+        if (i == 1858)
+        {
+            std::cout << "Intersection not found between triangle " << triangles[i] << std::endl;
+        }
+        if (i == 6556)
+        {
+            std::cout << "Intersection not found between triangle " << triangles[i] << std::endl;
+        }
+    }
     for (const auto& element : intersectsTriangles)
         std::cout << element << std::endl;
         

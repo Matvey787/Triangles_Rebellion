@@ -37,19 +37,19 @@ Line Triangle::findIntersectLine(Triangle& anotherTriangle)
     double mainDet2 = a1 * c2 - a2 * c1; // y = 0
     double mainDet3 = a1 * b2 - a2 * b1; // z = 0
 
-    if (!is_doubleZero(mainDet1)) // x = 0
+    if (!is_z(mainDet1)) // x = 0
     {
         y = (-d1 * c2 + d2 * c1) / mainDet1;
         z = (-b1 * d2 + b2 * d1) / mainDet1;
         return Line(intersectionBasis, Point(0, y, z));
     }
-    else if (!is_doubleZero(mainDet2)) // y = 0
+    else if (!is_z(mainDet2)) // y = 0
     {
         x = (-d1 * c2 + d2 * c1) / mainDet2;
         z = (-a1 * d2 + a2 * d1) / mainDet2;
         return Line(intersectionBasis, Point(x, 0, z));
     }
-    else if (!is_doubleZero(mainDet3)) // z = 0
+    else if (!is_z(mainDet3)) // z = 0
     {
         x = (-d1 * b2 + d2 * b1) / mainDet3;
         y = (-a1 * d2 + a2 * d1) / mainDet3;
@@ -122,10 +122,10 @@ bool Triangle::is_parallelTo(Triangle& anotherTriangle) {
     const GeoVector normal1 = l1_.getBasis().multiply_vectorially_by(l2_.getBasis());
     const GeoVector normal2 = anotherTriangle.l1_.getBasis().multiply_vectorially_by(anotherTriangle.l2_.getBasis());
     const GeoVector cross = normal1.multiply_vectorially_by(normal2);
-    if (is_doubleZero(cross.xProj_) && is_doubleZero(cross.yProj_) && is_doubleZero(cross.zProj_)) {
+    if (is_z(cross.xProj_) && is_z(cross.yProj_) && is_z(cross.zProj_)) {
         // Проверяем, лежат ли треугольники в одной плоскости
         GeoVector vec(p1_, anotherTriangle.p1_);
-        return is_doubleZero(vec.multiply_scalar_by(normal1));
+        return is_z(vec.multiply_scalar_by(normal1));
     }
     return false;
 }

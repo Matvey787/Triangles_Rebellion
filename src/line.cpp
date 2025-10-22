@@ -13,7 +13,7 @@ Point Line::intersect(const Point& p1, const Point& p2, const Point& p3) const {
 
     // проверяем параллельность линии и плоскости
     double denom = normal.multiply_scalar_by(basis_);
-    if (is_doubleZero(denom)) {
+    if (is_z(denom)) {
         return Point{NAN, NAN, NAN};
     }
 
@@ -57,7 +57,7 @@ Point Line::intersect(const Line& anotherLine) const
     
     // Пробуем решить через xy-плоскость
     double det_xy = a1 * (-b2) - (-a2) * b1;
-    if (!is_doubleZero(det_xy)) {
+    if (!is_z(det_xy)) {
         // Система уравнений:
         // a1*t - a2*s = dx, где dx = x2 - x1
         // b1*t - b2*s = dy, где dy = y2 - y1
@@ -70,7 +70,7 @@ Point Line::intersect(const Line& anotherLine) const
         double det_t = dx * (-b2) - (-a2) * dy;
         double det_s = a1 * dy - dx * b1;
         
-        if (!is_doubleZero(det_main)) {
+        if (!is_z(det_main)) {
             double t = det_t / det_main;
             double s = det_s / det_main;
             
@@ -78,7 +78,7 @@ Point Line::intersect(const Line& anotherLine) const
             double z_intersect1 = z1 + t * c1;
             double z_intersect2 = z2 + s * c2;
             
-            if (is_doubleZero(z_intersect1 - z_intersect2)) {
+            if (is_z(z_intersect1 - z_intersect2)) {
                 return Geo::Point(x1 + t * a1, y1 + t * b1, z_intersect1);
             }
         }
@@ -86,7 +86,7 @@ Point Line::intersect(const Line& anotherLine) const
     
     // Пробуем решить через xz-плоскость
     double det_xz = a1 * (-c2) - (-a2) * c1;
-    if (!is_doubleZero(det_xz)) {
+    if (!is_z(det_xz)) {
         // Система уравнений:
         // a1*t - a2*s = dx, где dx = x2 - x1
         // c1*t - c2*s = dz, где dz = z2 - z1
@@ -98,7 +98,7 @@ Point Line::intersect(const Line& anotherLine) const
         double det_t = dx * (-c2) - (-a2) * dz;
         double det_s = a1 * dz - dx * c1;
         
-        if (!is_doubleZero(det_main)) {
+        if (!is_z(det_main)) {
             double t = det_t / det_main;
             double s = det_s / det_main;
             
@@ -106,7 +106,7 @@ Point Line::intersect(const Line& anotherLine) const
             double y_intersect1 = y1 + t * b1;
             double y_intersect2 = y2 + s * b2;
             
-            if (is_doubleZero(y_intersect1 - y_intersect2)) {
+            if (is_z(y_intersect1 - y_intersect2)) {
                 return Geo::Point(x1 + t * a1, y_intersect1, z1 + t * c1);
             }
         }
@@ -114,7 +114,7 @@ Point Line::intersect(const Line& anotherLine) const
     
     // Пробуем решить через yz-плоскость
     double det_yz = b1 * (-c2) - (-b2) * c1;
-    if (!is_doubleZero(det_yz)) {
+    if (!is_z(det_yz)) {
         // Система уравнений:
         // b1*t - b2*s = dy, где dy = y2 - y1
         // c1*t - c2*s = dz, где dz = z2 - z1
@@ -126,7 +126,7 @@ Point Line::intersect(const Line& anotherLine) const
         double det_t = dy * (-c2) - (-b2) * dz;
         double det_s = b1 * dz - dy * c1;
         
-        if (!is_doubleZero(det_main)) {
+        if (!is_z(det_main)) {
             double t = det_t / det_main;
             double s = det_s / det_main;
             
@@ -134,7 +134,7 @@ Point Line::intersect(const Line& anotherLine) const
             double x_intersect1 = x1 + t * a1;
             double x_intersect2 = x2 + s * a2;
             
-            if (is_doubleZero(x_intersect1 - x_intersect2)) {
+            if (is_z(x_intersect1 - x_intersect2)) {
                 return Geo::Point(x_intersect1, y1 + t * b1, z1 + t * c1);
             }
         }

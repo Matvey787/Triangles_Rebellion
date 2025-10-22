@@ -47,7 +47,7 @@ struct Point
         double crossX = vy1 * vz2 - vz1 * vy2;
         double crossY = vz1 * vx2 - vx1 * vz2;
         double crossZ = vx1 * vy2 - vy1 * vx2;
-        if (!is_doubleZero(crossX) || !is_doubleZero(crossY) || !is_doubleZero(crossZ))
+        if (!is_z(crossX) || !is_z(crossY) || !is_z(crossZ))
             return false;
 
         // Проверяем, что точка лежит внутри отрезка, а не на продолжении прямой.
@@ -71,7 +71,7 @@ struct Point
         double ydiff = y_ - anotherPoint.y_;
         double zdiff = z_ - anotherPoint.z_;
 
-        return is_doubleZero(xdiff, ydiff, zdiff);
+        return is_z(xdiff, ydiff, zdiff);
     }
 
     friend std::ostream& operator<<(std::ostream& os, const Point& point)
@@ -104,7 +104,7 @@ struct GeoVector
 
     bool is_zero()
     {
-        return is_doubleZero(xProj_, yProj_, zProj_);
+        return is_z(xProj_, yProj_, zProj_);
     }
 
     bool is_parallel(const GeoVector& anotherVector) const
@@ -113,7 +113,7 @@ struct GeoVector
         double crossY = zProj_ * anotherVector.xProj_ - xProj_ * anotherVector.zProj_;
         double crossZ = xProj_ * anotherVector.yProj_ - yProj_ * anotherVector.xProj_;
 
-        return is_doubleZero(crossX, crossY, crossZ);
+        return is_z(crossX, crossY, crossZ);
     }
 
     GeoVector multiply_vectorially_by(const GeoVector& anotherVector) const

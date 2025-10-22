@@ -1,5 +1,6 @@
 #include "geo.h"
 #include <algorithm>
+#include <iostream>
 
 namespace Geo {
 
@@ -10,7 +11,7 @@ namespace detail {
     // FIXME
     inline planes_t findProjectionPlane(const GeoVector& normal)
     {
-        if (!is_doubleZero(normal.zProj_))
+        if (!is_z(normal.zProj_))
             return planes_t::XY; // плоскость треугольников не перп. пл-ти XY
 
         return planes_t::XZ;
@@ -60,8 +61,8 @@ bool Triangle::is_intersectAABB(const Triangle& anotherTriangle, detail::planes_
                                        anotherTriangle.p2_.y_,
                                        anotherTriangle.p3_.y_});
 
-            if (is_belowZero(th_maxX - an_minX) || is_belowZero(an_maxX - th_minX) ||
-                is_belowZero(th_maxY - an_minY) || is_belowZero(an_maxY - th_minY))
+            if (is_bz(th_maxX - an_minX) || is_bz(an_maxX - th_minX) ||
+                is_bz(th_maxY - an_minY) || is_bz(an_maxY - th_minY))
             {
                 return false;
             }
@@ -91,8 +92,8 @@ bool Triangle::is_intersectAABB(const Triangle& anotherTriangle, detail::planes_
                                        anotherTriangle.p2_.z_,
                                        anotherTriangle.p3_.z_});
 
-            if (is_belowZero(th_maxX - an_minX) || is_belowZero(an_maxX - th_minX) ||
-                is_belowZero(th_maxZ - an_minZ) || is_belowZero(an_maxZ - th_minZ))
+            if (is_bz(th_maxX - an_minX) || is_bz(an_maxX - th_minX) ||
+                is_bz(th_maxZ - an_minZ) || is_bz(an_maxZ - th_minZ))
             {
                 return false;
             }
@@ -156,7 +157,7 @@ bool Triangle::is_intersectSAT(const Triangle& anotherTriangle, detail::planes_t
         double an_max_proj = std::max({an_p1_proj, an_p2_proj, an_p3_proj});
         double an_min_proj = std::min({an_p1_proj, an_p2_proj, an_p3_proj});
 
-        if (is_belowZero(th_max_proj - an_min_proj) || is_belowZero(an_max_proj - th_min_proj))
+        if (is_bz(th_max_proj - an_min_proj) || is_bz(an_max_proj - th_min_proj))
         {
             return false;
         }
@@ -166,6 +167,7 @@ bool Triangle::is_intersectSAT(const Triangle& anotherTriangle, detail::planes_t
 
 bool Triangle::intersect2D(Triangle& anotherTriangle) {
 
+    // std::cout << "intersect2d\n";
 
     GeoVector v1(p2_.x_ - p1_.x_, p2_.y_ - p1_.y_, p2_.z_ - p1_.z_);
     GeoVector v2(p3_.x_ - p1_.x_, p3_.y_ - p1_.y_, p3_.z_ - p1_.z_);
