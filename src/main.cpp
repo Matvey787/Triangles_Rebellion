@@ -2,17 +2,37 @@
 #include <set>
 #include <sstream>
 #include <algorithm>
-#include "geo.h"
+#include "geo_triangle.hpp"
 #include "bvh.hpp"
 
 int main()
 {
-    size_t n;
-    std::cin >> n;
-    std::cin.ignore();
+    long long temp = 0;
+    size_t n = 0;
 
-    std::vector<Geo::Triangle> triangles(n);
-    std::vector<Geo::Point> points(3);
+    while (true)
+    {
+        if (!(std::cin >> temp)) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Try again: ";
+            continue;
+        }
+
+        if (temp < 0) {
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Number must be non-negative. Try again: ";
+            continue;
+        }
+
+        n = static_cast<size_t>(temp);
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        break;
+    }
+
+
+    std::vector<Geo::Triangle<double>> triangles(n);
+    std::vector<Geo::Point<double>> points(3);
 
     for (size_t i = 0; i < n; i++)
     {
@@ -45,16 +65,18 @@ int main()
                                 std::to_string(coords.size()));
         }
 
-        triangles[i] = Geo::Triangle(
-            Geo::Point(coords[0], coords[1], coords[2]),
-            Geo::Point(coords[3], coords[4], coords[5]), 
-            Geo::Point(coords[6], coords[7], coords[8])
+        triangles[i] = Geo::Triangle<double>(
+            Geo::Point<double>(coords[0], coords[1], coords[2]),
+            Geo::Point<double>(coords[3], coords[4], coords[5]), 
+            Geo::Point<double>(coords[6], coords[7], coords[8])
         );
     }
 
-    BVH::BVH bvh(triangles);
+    BVH::BVH<double> bvh(triangles);
 
     std::set<size_t> intersectsTriangles;
+
+    //bvh.potentianlOverlapsPrint(1872, triangles);
 
     for (size_t i = 0; i < n; i++)
     {
