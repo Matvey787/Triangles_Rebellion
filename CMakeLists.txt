@@ -4,7 +4,7 @@ project(LIRS_Cache LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CXX_STANDARD "cxx_std_20")
 
-option(BUILD_TESTING "Build tests" OFF)
+option(GTEST "Build tests" OFF)
 option(SANITIZE "Enable sanitizers" OFF)
 
 set(SANITIZER_FLAGS "-fsanitize=address,undefined,leak")
@@ -25,22 +25,17 @@ include_directories(${CMAKE_SOURCE_DIR}/inc)
 
 # -------------------------------------------------------------------------------------------------
 # Double lib
-set(DOUBLE_LIB double)
+set(DOUBLE_LIB double INTERFACE)
 add_library(${DOUBLE_LIB})
 
 file(GLOB DOUBLE_SRC src/Geo/General/src/*.cpp)
 
 target_include_directories(${DOUBLE_LIB}
-    PUBLIC
+    INTERFACE
         src/Geo/General/inc
 )
 
-target_sources(${DOUBLE_LIB}
-    PRIVATE
-        ${DOUBLE_SRC}
-)
-
-target_compile_features(${DOUBLE_LIB} PRIVATE ${CXX_STANDARD})
+target_compile_features(${DOUBLE_LIB} INTERFACE ${CXX_STANDARD})
 
 
 # -------------------------------------------------------------------------------------------------
@@ -171,9 +166,4 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_compile_options(${OUT_EXE} PRIVATE ${DEBUG_FLAGS})
 endif()
 
-# -------------------------------------------------------------------------------------------------
-# Tests
-if (BUILD_TESTING)
-    enable_testing()
-    add_subdirectory(tests)
-endif()
+add_subdirectory(src/Geo/Triangle/tester)

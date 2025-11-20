@@ -38,9 +38,9 @@ public:
     bool
     is_parallel(const Vector<T>& anotherVector) const
     {
-        double crossX = yProj_ * anotherVector.zProj_ - zProj_ * anotherVector.yProj_;
-        double crossY = zProj_ * anotherVector.xProj_ - xProj_ * anotherVector.zProj_;
-        double crossZ = xProj_ * anotherVector.yProj_ - yProj_ * anotherVector.xProj_;
+        T crossX = yProj_ * anotherVector.zProj_ - zProj_ * anotherVector.yProj_;
+        T crossY = zProj_ * anotherVector.xProj_ - xProj_ * anotherVector.zProj_;
+        T crossZ = xProj_ * anotherVector.yProj_ - yProj_ * anotherVector.xProj_;
 
         return is_z(crossX, crossY, crossZ);
     }
@@ -57,7 +57,7 @@ public:
     }
 
     /// @brief Scalar product of a this vector and a vector
-    double
+    T
     multiply_scalar_by(const Vector<T>& anotherVector) const
     {
         return xProj_ * anotherVector.xProj_ +
@@ -67,7 +67,7 @@ public:
 
 
     // The scalar product of a this vector and the radius vector of a point
-    double
+    T
     multiply_scalar_by(const Point<T>& p) const
     {
         return xProj_ * p.x_ + yProj_ * p.y_ + zProj_ * p.z_;

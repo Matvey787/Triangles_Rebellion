@@ -35,27 +35,27 @@ public:
             return false;
 
         // Vector p1p (from the beginning of the segment to our point)
-        double vx1 = x_ - p1.x_;
-        double vy1 = y_ - p1.y_;
-        double vz1 = z_ - p1.z_;
+        T vx1 = x_ - p1.x_;
+        T vy1 = y_ - p1.y_;
+        T vz1 = z_ - p1.z_;
 
         // Vector p1p2 (entire segment)
-        double vx2 = p2.x_ - p1.x_;
-        double vy2 = p2.y_ - p1.y_;
-        double vz2 = p2.z_ - p1.z_;
+        T vx2 = p2.x_ - p1.x_;
+        T vy2 = p2.y_ - p1.y_;
+        T vz2 = p2.z_ - p1.z_;
 
         // If it is not equal to zero, the vectors are not collinear
-        double crossX = vy1 * vz2 - vz1 * vy2;
-        double crossY = vz1 * vx2 - vx1 * vz2;
-        double crossZ = vx1 * vy2 - vy1 * vx2;
+        T crossX = vy1 * vz2 - vz1 * vy2;
+        T crossY = vz1 * vx2 - vx1 * vz2;
+        T crossZ = vx1 * vy2 - vy1 * vx2;
         if (!is_z(crossX) || !is_z(crossY) || !is_z(crossZ))
             return false;
 
-        double dot = vx1 * vx2 + vy1 * vy2 + vz1 * vz2;
+        T dot = vx1 * vx2 + vy1 * vy2 + vz1 * vz2;
         if (is_bz(dot))
             return false;
 
-        double lenSq = vx2 * vx2 + vy2 * vy2 + vz2 * vz2;
+        T lenSq = vx2 * vx2 + vy2 * vy2 + vz2 * vz2;
         if (is_az(dot - lenSq))
             return false;
 
@@ -67,14 +67,14 @@ public:
     bool
     is_equalTo(const Point<T>& p) const
     {
-        double xdiff = x_ - p[0];
-        double ydiff = y_ - p[1];
-        double zdiff = z_ - p[2];
+        T xdiff = x_ - p[0];
+        T ydiff = y_ - p[1];
+        T zdiff = z_ - p[2];
         return is_z(xdiff, ydiff, zdiff);
     }
 
     /// @brief 0 = get(x), 1 = get(y), 2 = get(z)
-    double
+    T
     operator[](int index) const
     {
         switch (index)
