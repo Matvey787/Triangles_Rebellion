@@ -9,6 +9,8 @@
 std::vector<Geo::Triangle<double>> input_stdin();
 std::vector<Geo::Triangle<double>> input_fstream(std::string_view fileName);
 void inputCoords(std::vector<Geo::Triangle<double>>& triangles, std::istream& iss);
+std::set<size_t> analyzeIntersections_ON_BVH(std::vector<Geo::Triangle<double>>& triangles);
+std::set<size_t> analyzeIntersections_OFF_BVH(std::vector<Geo::Triangle<double>>& triangles);
 
 int main(int argc, const char* argv[])
 {
@@ -23,6 +25,20 @@ int main(int argc, const char* argv[])
         triangles = input_stdin();
     }
 
+    #ifdef BVH_OFF
+        std::set<size_t> intersectsTriangles = analyzeIntersections_OFF_BVH(triangles);
+    #else
+        std::set<size_t> intersectsTriangles = analyzeIntersections_ON_BVH(triangles);
+    #endif
+
+    for (auto idx : intersectsTriangles)
+        std::cout << idx << std::endl;
+        
+    return 0;
+}
+
+std::set<size_t> analyzeIntersections_ON_BVH(std::vector<Geo::Triangle<double>>& triangles)
+{
     BVH::BVH<double> bvh(triangles);
 
     std::set<size_t> intersectsTriangles;
@@ -43,10 +59,24 @@ int main(int argc, const char* argv[])
         }
     }
 
-    for (auto idx : intersectsTriangles)
-        std::cout << idx << std::endl;
-        
-    return 0;
+    return intersectsTriangles;
+}
+
+std::set<size_t> analyzeIntersections_OFF_BVH(std::vector<Geo::Triangle<double>>& triangles)
+{
+    std::set<size_t> intersectsTriangles;
+
+    for (size_t i = 0, numberOfTriangles = triangles.size(); i < numberOfTriangles; i++)
+        for (size_t j = i + 1; j < numberOfTriangles; j++)
+        {
+            if (triangles[i].is_intersect(triangles[j]))
+            {
+                intersectsTriangles.insert(i);
+                intersectsTriangles.insert(j);
+            }
+        }
+
+    return intersectsTriangles;
 }
 
 std::vector<Geo::Triangle<double>> input_stdin()

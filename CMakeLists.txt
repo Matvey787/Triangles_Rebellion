@@ -6,6 +6,7 @@ set(CXX_STANDARD "cxx_std_20")
 
 option(GTEST "Build tests" OFF)
 option(SANITIZE "Enable sanitizers" OFF)
+option(BVH_OFF "Disable BVH usage" OFF)
 
 set(SANITIZER_FLAGS "-fsanitize=address,undefined,leak")
 set(DEBUG_FLAGS "-Wextra -Wall -Wpedantic")
@@ -161,6 +162,10 @@ target_link_libraries(${OUT_EXE}
         ${BVH_LIB}
         ${GEO_LIB}
 )
+
+if(BVH_OFF)
+    target_compile_definitions(${OUT_EXE} PRIVATE BVH_OFF)
+endif()
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_compile_options(${OUT_EXE} PRIVATE ${DEBUG_FLAGS})
