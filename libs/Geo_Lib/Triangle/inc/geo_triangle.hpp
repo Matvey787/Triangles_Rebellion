@@ -16,25 +16,26 @@ enum class planes_t { XY, XZ, YZ };
 
 namespace Detail {
 
-template<typename T> T
+template<typename T>
+T
 signDeterminant(const Geo::Point<T>& plane_p1,
                   const Geo::Point<T>& plane_p2,
                   const Geo::Point<T>& plane_p3,
                   const Geo::Point<T>& p)
 {
-    double v1x = plane_p1.x_ - p.x_;
-    double v1y = plane_p1.y_ - p.y_;
-    double v1z = plane_p1.z_ - p.z_;
+    T v1x = plane_p1.x_ - p.x_;
+    T v1y = plane_p1.y_ - p.y_;
+    T v1z = plane_p1.z_ - p.z_;
 
-    double v2x = plane_p2.x_ - p.x_;
-    double v2y = plane_p2.y_ - p.y_;
-    double v2z = plane_p2.z_ - p.z_;
+    T v2x = plane_p2.x_ - p.x_;
+    T v2y = plane_p2.y_ - p.y_;
+    T v2z = plane_p2.z_ - p.z_;
 
-    double v3x = plane_p3.x_ - p.x_;
-    double v3y = plane_p3.y_ - p.y_;
-    double v3z = plane_p3.z_ - p.z_;
+    T v3x = plane_p3.x_ - p.x_;
+    T v3y = plane_p3.y_ - p.y_;
+    T v3z = plane_p3.z_ - p.z_;
 
-    double det =
+    T det =
         v1x * (v2y * v3z - v2z * v3y) -
         v1y * (v2x * v3z - v2z * v3x) +
         v1z * (v2x * v3y - v2y * v3x);
@@ -45,9 +46,9 @@ signDeterminant(const Geo::Point<T>& plane_p1,
 template<typename T> planes_t
 findProjectionPlane(const Geo::Vector<T>& normal)
 {
-    double ax = std::abs(normal.xProj_);
-    double ay = std::abs(normal.yProj_);
-    double az = std::abs(normal.zProj_);
+    T ax = std::abs(normal.xProj_);
+    T ay = std::abs(normal.yProj_);
+    T az = std::abs(normal.zProj_);
 
     if (ax >= ay && ax >= az)
         return planes_t::YZ;
@@ -58,16 +59,16 @@ findProjectionPlane(const Geo::Vector<T>& normal)
 }
 
 template <typename T>
-double getPointProj(const Point<T>& point, const Line<T>& line)
+T getPointProj(const Point<T>& point, const Line<T>& line)
 {
     const Point<T>& linePoint = line.getPoint();
     const Vector<T>& lineBasis = line.getBasis();
 
     Vector<T> fromLinePointToPoint = Vector<T>(linePoint, point);
 
-    double lineBasisLengthSq = lineBasis.multiply_scalar_by(lineBasis);
+    T lineBasisLengthSq = lineBasis.multiply_scalar_by(lineBasis);
 
-    double proj = fromLinePointToPoint.multiply_scalar_by(lineBasis) / lineBasisLengthSq;
+    T proj = fromLinePointToPoint.multiply_scalar_by(lineBasis) / lineBasisLengthSq;
 
     return proj;
 }
@@ -115,24 +116,24 @@ class Triangle
                 throw std::invalid_argument("Invalid projection plane");
         }
 
-        double th_min1 = std::min({p1_[plainIdx1], p2_[plainIdx1], p3_[plainIdx1]});
-        double th_max1 = std::max({p1_[plainIdx1], p2_[plainIdx1], p3_[plainIdx1]});
-        double th_min2 = std::min({p1_[plainIdx2], p2_[plainIdx2], p3_[plainIdx2]});
-        double th_max2 = std::max({p1_[plainIdx2], p2_[plainIdx2], p3_[plainIdx2]});
+        T th_min1 = std::min({p1_[plainIdx1], p2_[plainIdx1], p3_[plainIdx1]});
+        T th_max1 = std::max({p1_[plainIdx1], p2_[plainIdx1], p3_[plainIdx1]});
+        T th_min2 = std::min({p1_[plainIdx2], p2_[plainIdx2], p3_[plainIdx2]});
+        T th_max2 = std::max({p1_[plainIdx2], p2_[plainIdx2], p3_[plainIdx2]});
 
-        double an_min1 = std::min({anotherTriangle.p1_[plainIdx1], 
+        T an_min1 = std::min({anotherTriangle.p1_[plainIdx1], 
                                     anotherTriangle.p2_[plainIdx1],
                                     anotherTriangle.p3_[plainIdx1]});
 
-        double an_max1 = std::max({anotherTriangle.p1_[plainIdx1],
+        T an_max1 = std::max({anotherTriangle.p1_[plainIdx1],
                                     anotherTriangle.p2_[plainIdx1],
                                     anotherTriangle.p3_[plainIdx1]});
 
-        double an_min2 = std::min({anotherTriangle.p1_[plainIdx2],
+        T an_min2 = std::min({anotherTriangle.p1_[plainIdx2],
                                     anotherTriangle.p2_[plainIdx2],
                                     anotherTriangle.p3_[plainIdx2]});
 
-        double an_max2 = std::max({anotherTriangle.p1_[plainIdx2],
+        T an_max2 = std::max({anotherTriangle.p1_[plainIdx2],
                                     anotherTriangle.p2_[plainIdx2],
                                     anotherTriangle.p3_[plainIdx2]});
 
@@ -185,19 +186,19 @@ class Triangle
             const Point<T>& an_p2 = *points[(tIdx + 1) % 2][(pIdx + 1) % 3];
             const Point<T>& an_p3 = *points[(tIdx + 1) % 2][(pIdx + 2) % 3];
 
-            double th_p1_proj = Detail::getPointProj(th_p1, normal);
-            double th_p2_proj = Detail::getPointProj(th_p2, normal);
-            double th_p3_proj = Detail::getPointProj(th_p3, normal);
+            T th_p1_proj = Detail::getPointProj(th_p1, normal);
+            T th_p2_proj = Detail::getPointProj(th_p2, normal);
+            T th_p3_proj = Detail::getPointProj(th_p3, normal);
 
-            double an_p1_proj = Detail::getPointProj(an_p1, normal);
-            double an_p2_proj = Detail::getPointProj(an_p2, normal);
-            double an_p3_proj = Detail::getPointProj(an_p3, normal);
+            T an_p1_proj = Detail::getPointProj(an_p1, normal);
+            T an_p2_proj = Detail::getPointProj(an_p2, normal);
+            T an_p3_proj = Detail::getPointProj(an_p3, normal);
 
-            double th_max_proj = std::max({th_p1_proj, th_p2_proj, th_p3_proj});
-            double th_min_proj = std::min({th_p1_proj, th_p2_proj, th_p3_proj});
+            T th_max_proj = std::max({th_p1_proj, th_p2_proj, th_p3_proj});
+            T th_min_proj = std::min({th_p1_proj, th_p2_proj, th_p3_proj});
 
-            double an_max_proj = std::max({an_p1_proj, an_p2_proj, an_p3_proj});
-            double an_min_proj = std::min({an_p1_proj, an_p2_proj, an_p3_proj});
+            T an_max_proj = std::max({an_p1_proj, an_p2_proj, an_p3_proj});
+            T an_min_proj = std::min({an_p1_proj, an_p2_proj, an_p3_proj});
 
             if (is_bz(th_max_proj - an_min_proj) || is_bz(an_max_proj - th_min_proj))
             {
@@ -237,14 +238,14 @@ class Triangle
 
         planes_t projPlane = Detail::findProjectionPlane(normal);
 
-        double u1 = 0;
-        double v1_ = 0;
-        double u2 = 0;
-        double v2_ = 0;
-        double u3 = 0;
-        double v3_ = 0;
-        double up = 0;
-        double vp = 0;
+        T u1 = 0;
+        T v1_ = 0;
+        T u2 = 0;
+        T v2_ = 0;
+        T u3 = 0;
+        T v3_ = 0;
+        T up = 0;
+        T vp = 0;
 
         switch (projPlane) {
             case planes_t::XY:
@@ -267,10 +268,10 @@ class Triangle
                 break;
         }
 
-        double area  = (u2 - u1)*(v3_ - v1_) - (v2_ - v1_)*(u3 - u1);
-        double area1 = (u2 - up)*(v3_ - vp) - (v2_ - vp)*(u3 - up);
-        double area2 = (u3 - up)*(v1_ - vp) - (v3_ - vp)*(u1 - up);
-        double area3 = (u1 - up)*(v2_ - vp) - (v1_ - vp)*(u2 - up);
+        T area  = (u2 - u1)*(v3_ - v1_) - (v2_ - v1_)*(u3 - u1);
+        T area1 = (u2 - up)*(v3_ - vp) - (v2_ - vp)*(u3 - up);
+        T area2 = (u3 - up)*(v1_ - vp) - (v3_ - vp)*(u1 - up);
+        T area3 = (u1 - up)*(v2_ - vp) - (v1_ - vp)*(u2 - up);
 
         bool sameSign = ((is_aez(area) && is_aez(area1, area2, area3)) ||
                         (is_bez(area) && is_bez(area1, area2, area3)));

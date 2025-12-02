@@ -54,25 +54,19 @@ std::vector<Geo::Triangle<double>> input_stdin()
     long long temp = 0;
     size_t n = 0;
 
-    while (true)
-    {
-        if (!(std::cin >> temp)) {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "Try again: ";
-            continue;
-        }
-
-        if (temp < 0) {
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "Number must be non-negative. Try again: ";
-            continue;
-        }
-
-        n = static_cast<size_t>(temp);
+    if (!(std::cin >> temp)) {
+        std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        break;
+        throw std::runtime_error("Invalid input. Expected a number.");
     }
+
+    if (temp < 0) {
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        throw std::runtime_error("Number must be non-negative.");
+    }
+
+    n = static_cast<size_t>(temp);
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     
     std::vector<Geo::Triangle<double>> triangles(n);
     inputCoords(triangles, std::cin);    

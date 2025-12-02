@@ -2,8 +2,8 @@
 
 # CTest
 set(CTEST_PROGRAM_EXEC   "${CMAKE_SOURCE_DIR}/build/out")
-set(CTEST_INPUTS_DIR     "${CMAKE_SOURCE_DIR}/src/Geo/Triangle/tests/e2e/dat")
-set(CTEST_ANSWERS_DIR    "${CMAKE_SOURCE_DIR}/src/Geo/Triangle/tests/e2e/ans")
+set(CTEST_INPUTS_DIR     "${CMAKE_SOURCE_DIR}/libs/Geo_Lib/Triangle/tests/e2e/dat")
+set(CTEST_ANSWERS_DIR    "${CMAKE_SOURCE_DIR}/libs/Geo_Lib/Triangle/tests/e2e/ans")
 
 set(CTEST_INPUT_PATTERN  "dat")
 set(CTEST_ANSWER_PATTERN "ans")
@@ -11,7 +11,7 @@ set(CTEST_PREFIX         "...")
 set(CTEST_TIMEOUT        30)
 
 # Gtest
-set(GTEST_DIR "${CMAKE_SOURCE_DIR}/src/Geo/Triangle/tests/gtest")
+set(GTEST_DIR "${CMAKE_SOURCE_DIR}/libs/Geo_Lib/Triangle/tests/gtest")
 set(GTEST_OUTPUT_EXEC_FILE_NAME "geo_tests")
 set(GTEST_USERDEFINED_ADDITIONAL_LIBS "bvh" "geo")
 

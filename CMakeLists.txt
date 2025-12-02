@@ -28,11 +28,10 @@ include_directories(${CMAKE_SOURCE_DIR}/inc)
 set(DOUBLE_LIB double INTERFACE)
 add_library(${DOUBLE_LIB})
 
-file(GLOB DOUBLE_SRC src/Geo/General/src/*.cpp)
 
 target_include_directories(${DOUBLE_LIB}
     INTERFACE
-        src/Geo/General/inc
+        libs/Double_Lib/inc
 )
 
 target_compile_features(${DOUBLE_LIB} INTERFACE ${CXX_STANDARD})
@@ -45,7 +44,7 @@ add_library(${POINT_LIB} INTERFACE)
 
 target_include_directories(${POINT_LIB}
     INTERFACE
-        src/Geo/Point/inc
+        libs/Geo_Lib/Point/inc
 )
 
 target_link_libraries(${POINT_LIB}
@@ -63,7 +62,7 @@ add_library(${VECTOR_LIB} INTERFACE)
 
 target_include_directories(${VECTOR_LIB}
     INTERFACE
-        src/Geo/Vector/inc
+        libs/Geo_Lib/Vector/inc
 )
 
 target_link_libraries(${VECTOR_LIB}
@@ -82,7 +81,7 @@ add_library(${LINE_LIB} INTERFACE)
 
 target_include_directories(${LINE_LIB}
     INTERFACE
-        src/Geo/Line/inc
+        libs/Geo_Lib/Line/inc
 )
 
 target_link_libraries(${LINE_LIB}
@@ -102,7 +101,7 @@ add_library(${TRIANGLE_LIB} INTERFACE)
 
 target_include_directories(${TRIANGLE_LIB}
     INTERFACE
-        src/Geo/Triangle/inc
+        libs/Geo_Lib/Triangle/inc
 )
 
 target_link_libraries(${TRIANGLE_LIB}
@@ -136,7 +135,7 @@ add_library(${BVH_LIB} INTERFACE)
 
 target_include_directories(${BVH_LIB}
     INTERFACE
-        src/BVH/inc
+        libs/BVH_Lib/inc
 )
 
 target_link_libraries(${BVH_LIB}
@@ -166,4 +165,4 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_compile_options(${OUT_EXE} PRIVATE ${DEBUG_FLAGS})
 endif()
 
-add_subdirectory(src/Geo/Triangle/tester)
+add_subdirectory(tester)
