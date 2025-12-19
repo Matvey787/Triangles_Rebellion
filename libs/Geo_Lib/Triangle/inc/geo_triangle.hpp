@@ -1,5 +1,4 @@
-#ifndef GEO_H
-#define GEO_H
+# pragma once
 
 #include "double.hpp"
 #include "geo_point.hpp"
@@ -84,7 +83,6 @@ class Triangle
     Line<T> l1_;
     Line<T> l2_;
     Line<T> l3_;
-
     // Functions specialized to find intersection in 2D
     bool
     is_intersectAABB(const Triangle<T>& anotherTriangle, planes_t projPlane) const
@@ -412,5 +410,3 @@ operator<<(std::ostream& os, const Triangle<T>& triangle)
 }
 
 } // namespace Geo
-
-#endif // GEO_H
