@@ -1,31 +1,40 @@
-#pragma once
+module;
 
-#include "input.hpp"
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-namespace OGLWrap {
+
+#include <iostream>
+#include <memory>
+
+import input;
+
+export module camera;
+
+export namespace OGLWrap {
 
 class ICamera {
 public:
-    virtual void moveForward(float speed) = 0;
+    virtual void moveForward (float speed) = 0;
     virtual void moveBackward(float speed) = 0;
-    virtual void moveLeft(float speed) = 0;
-    virtual void moveRight(float speed) = 0;
-    virtual void rotate(float xOffset, float yOffset) = 0;
+    virtual void moveLeft    (float speed) = 0;
+    virtual void moveRight   (float speed) = 0;
+    virtual void rotate      (float xOffset, float yOffset) = 0;
 
     virtual void setCameraPos(const glm::vec3& cameraPosVec) = 0;
     virtual void setTargetPos(const glm::vec3& targetPosVec) = 0;
-    virtual void setCameraUp(const glm::vec3& cameraUpVec) = 0;
-    virtual void setYaw(float yaw) = 0;
-    virtual void setPitch(float pitch) = 0;
+    virtual void setCameraUp (const glm::vec3& cameraUpVec)  = 0;
+    virtual void setYaw      (float yaw)   = 0;
+    virtual void setPitch    (float pitch) = 0;
 
-    virtual float getYaw() = 0;
+    virtual float getYaw  () = 0;
     virtual float getPitch() = 0;
-    virtual glm::vec3 getCameraPos() = 0;
-    virtual glm::vec3 getTargetPos() = 0;
-    virtual glm::vec3 getCameraUp() = 0;
+    virtual glm::vec3 getCameraPos () = 0;
+    virtual glm::vec3 getTargetPos () = 0;
+    virtual glm::vec3 getCameraUp  () = 0;
     virtual glm::mat4 getViewMatrix() = 0;
     
 

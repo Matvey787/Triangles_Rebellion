@@ -1,10 +1,15 @@
-#pragma once
+module;
 
-#include "color.hpp"
-#include "window.hpp"
+#include <unistd.h>
+#include <memory>
+#include <string>
 
+import window;
+import color;
 
-namespace OGLWrap {
+export module winConfigurator;
+
+export namespace OGLWrap {
 
 class IBuilder {
 public:

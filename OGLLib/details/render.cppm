@@ -1,7 +1,5 @@
-#pragma once
+module;
 
-#include "camera.hpp"
-#include "color.hpp"
 #include "geo.h"
 
 #define GLFW_INCLUDE_NONE
@@ -18,8 +16,13 @@
 #include <iterator>
 #include <typeindex>
 
+import color;
+import camera;
+import input;
 
-namespace OGLWrap {
+export module render;
+
+export namespace OGLWrap {
 
 class IOGLMesh {
 public:

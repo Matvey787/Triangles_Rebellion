@@ -1,9 +1,11 @@
-#pragma once
+module;
 
 #include <map>
 #include <string>
 
-namespace OGLWrap {
+export module color;
+
+export namespace OGLWrap {
 
 class RGB_color final {
 public:

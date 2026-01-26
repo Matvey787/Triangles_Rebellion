@@ -1,5 +1,8 @@
 #include <iostream>
-#include "OGLWrap/OGLWrap.hpp"
+#include <memory>
+#include "geo.h"
+
+import OGLWrap;
 
 int main() {
     // Создаем треугольник

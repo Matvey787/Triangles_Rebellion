@@ -1,17 +1,21 @@
-#pragma once
+module;
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
     
 #include "glad/glad.h"
 
+#include <iostream>
 #include <unordered_map>
 #include <vector>
 #include <memory>
 #include <algorithm>
 #include <variant>
+#include <cmath>
 
-namespace OGLWrap {
+export module input;
+
+export namespace OGLWrap {
 
 class KeyEvent {
 public:
@@ -78,7 +82,6 @@ public:
     }
 };
 
-// Общий класс для управления всеми обработчиками ввода
 class InputManager {
 private:
     struct InputState {

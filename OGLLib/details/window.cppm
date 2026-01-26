@@ -1,10 +1,6 @@
-#pragma once
+module;
 
 #include "geo.h"
-#include "color.hpp"
-#include "render.hpp"
-#include "input.hpp"
-#include "camera.hpp"
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -16,7 +12,14 @@
 #include <stdexcept>
 #include <string_view>
 
-namespace OGLWrap {
+import color;
+import render;
+import input;
+import camera;
+
+export module window;
+
+export namespace OGLWrap {
 
 class WinConfig {
 public:
@@ -52,13 +55,10 @@ public:
 
 
 class GLFWWin : public BaseWin {
-private:
-    static bool glfwInitialized;  // Добавляем статический флаг
-    static bool gladInitialized;
     
 public:
     GLFWWin(const WinConfig& config) : BaseWin(config) {
-        // Инициализируем GLFW в конструкторе (только один раз)
+        static bool glfwInitialized = false;
         if (!glfwInitialized) {
             if (glfwInit() == GLFW_FALSE) {
                 throw std::runtime_error("GLFW initialization failed");
@@ -75,6 +75,8 @@ public:
 protected:
     GLFWwindow* glfwWindow = nullptr;
     void create() override {
+        static bool gladInitialized = false;
+
         if (glfwWindow) return;  // Окно уже создано
         
         glfwDefaultWindowHints();
@@ -115,7 +117,7 @@ protected:
         );
         
         glfwSetWindowPos(glfwWindow, 
-                         static_cast<int>(config.start_posX),  // Исправляем каст
+                         static_cast<int>(config.start_posX),
                          static_cast<int>(config.start_posY));
         
         glfwShowWindow(glfwWindow);
@@ -151,9 +153,6 @@ protected:
     }
 };
 
-// Инициализация статического члена
-bool GLFWWin::glfwInitialized = false;
-bool GLFWWin::gladInitialized = false;
 
 class Win3D : public GLFWWin {
 private:
