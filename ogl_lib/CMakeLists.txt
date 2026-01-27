@@ -1,25 +1,28 @@
 cmake_minimum_required(VERSION 3.28)
-project(ogl LANGUAGES C CXX)
+project(ogllib LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-    message(STATUS "No build type selected, defaulting to Debug")
-    set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build.")
-endif()
-
-
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED)
 
 
+# GEO Lib
+
+set(GEO_LIB_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../geo_lib)
+set(GEO_LIB_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/geo_lib)
+
+add_subdirectory(${GEO_LIB_SOURCE_DIR} ${GEO_LIB_BINARY_DIR})
+
+
 # GLAD Lib
+
 set(GLAD_LIB glad_lib)
 add_library(${GLAD_LIB})
-set(GLAD_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/OGLWrap/glad/src)
-set(GLAD_INC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/OGLWrap/glad/include)
+set(GLAD_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/details/glad/src)
+set(GLAD_INC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/details/glad/include)
 
 
 file(GLOB GLAD_SOURCES "${GLAD_SRC_DIR}/*.c")
@@ -40,7 +43,7 @@ target_include_directories(${GLAD_LIB}
 set(GLM_LIB glm_lib)
 add_library(${GLM_LIB} INTERFACE)
 
-set(GLM_INC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/OGLWrap/glm)
+set(GLM_INC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/details/glm)
 
 target_include_directories(${GLM_LIB}
     INTERFACE
@@ -54,8 +57,7 @@ set(OGL_LIB ogl_lib)
 add_library(${OGL_LIB})
 
 file(GLOB OGL_MODULES 
-    "${CMAKE_CURRENT_SOURCE_DIR}/OGLWrap/details/*.cppm"
-    "${CMAKE_CURRENT_SOURCE_DIR}/OGLWrap/*.cppm"
+    "${CMAKE_CURRENT_SOURCE_DIR}/details/*.cppm"
 )
 
 target_sources(${OGL_LIB}
@@ -71,23 +73,7 @@ target_link_libraries(${OGL_LIB}
         ${GLAD_LIB}
         ${GLM_LIB}
         glfw
-)
-
-target_include_directories(${OGL_LIB}
-    PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/../inc
+        geo_lib
 )
 
 
-# Example1 exe
-
-set(EXAMPLE1_EXE example1)
-
-add_executable(${EXAMPLE1_EXE}
-    ${CMAKE_CURRENT_SOURCE_DIR}/examples/example1.cpp
-)
-
-target_link_libraries(${EXAMPLE1_EXE}
-    PUBLIC
-        ${OGL_LIB}
-)
