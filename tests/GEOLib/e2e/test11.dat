@@ -1,3 +1,0 @@
-2
-Triangle t1(Point(0, 0, 0), Point(3, 0, 0), Point(0, 3, 0));
-Triangle t2(Point(3, -2, -1234), Point(5, -4, 100000), Point(3, 0, 0));
