@@ -1,6 +1,6 @@
 #include <iostream>
 #include <memory>
-#include "geo.h"
+#include "geo.hpp"
 
 import OGLWrap;
 
