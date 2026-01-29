@@ -187,7 +187,7 @@ public:
         inputService_->handleMouseEvents();
     }
 
-    void addTriangle(const Geo::Triangle& triangle, const RGB_color& color = RGB_color{255, 255, 255}) {
+    void addTriangle(const Geo::Triangle<float>& triangle, const RGB_color& color = RGB_color{255, 255, 255}) {
 
         std::shared_ptr<IOGLMesh> mesh = std::make_shared<TriangleMesh>(triangle, color);
         

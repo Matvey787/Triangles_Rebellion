@@ -35,12 +35,12 @@ public:
 };
 
 class TriangleMesh final : public IOGLMesh {
-    Geo::Triangle triangle_;
+    Geo::Triangle<float> triangle_;
     OGLWrap::RGB_color color_ = OGLWrap::RGB_color{255, 255, 255};
     bool isDynamic_ = false;
     
 public:
-    TriangleMesh(const Geo::Triangle& triangle, 
+    TriangleMesh(const Geo::Triangle<float>& triangle, 
                  const OGLWrap::RGB_color& color = OGLWrap::RGB_color{255, 255, 255},
                  bool isDynamic = false) 
         : triangle_(triangle), color_(color), isDynamic_(isDynamic) {}

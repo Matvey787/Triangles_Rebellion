@@ -19,10 +19,10 @@ int main() {
     
     for (size_t i = 0; i < 100000; i++) {
 
-        Geo::Point p1(0.0f+ 0.5*i, 0.0f + 0.5*i, 0.0f + 0.5*i);
-        Geo::Point p2(1.0f+ 0.5*i, 0.0f + 0.5*i, 0.0f + 0.5*i);
-        Geo::Point p3(0.0f+ 0.5*i, 1.0f+ 0.5*i , 0.0f + 0.5*i);
-        Geo::Triangle triangle(p1, p2, p3);
+        Geo::Point<float> p1(0.0f+ 0.5*i, 0.0f + 0.5*i, 0.0f + 0.5*i);
+        Geo::Point<float> p2(1.0f+ 0.5*i, 0.0f + 0.5*i, 0.0f + 0.5*i);
+        Geo::Point<float> p3(0.0f+ 0.5*i, 1.0f+ 0.5*i , 0.0f + 0.5*i);
+        Geo::Triangle<float> triangle(p1, p2, p3);
         // Добавляем треугольник в окно
         w1->addTriangle(triangle);
     }
