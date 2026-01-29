@@ -1,13 +1,12 @@
 # Geometry Library
 
-## Intro
+## Description
+
 
 The Geometry Library provides control over standard geometric containers such as points, vectors, lines, 
 and triangles.  
 
-## Documentation
-
-1. All interfaces are located in the GEO namespace. Library header is `geo.hpp`. Below is a simple example of how to create points and triangles using the library:
+All interfaces are located in the GEO namespace. Library header is `geo.hpp`. Below is a simple example of how to create points and triangles using the library:
 
 ```cpp
 #include "geo.hpp"
@@ -51,7 +50,7 @@ for (size_t i = 0, numberOfTriangles = triangles.size(); i < numberOfTriangles; 
 }
 ```
 
-2. To compile the project, you need to enable the add_subdirectory(path/to/geo_lib) command in cmake, then add the geo_lib library to the targets that use this library. (Same with bvh_lib)
+To compile the project, you need to enable the add_subdirectory(path/to/geo_lib) command in cmake, then add the geo_lib library to the targets that use this library. (Same with bvh_lib)
 
 Example you can find [here](examples/geo_lib/CMakeLists.txt)
 
