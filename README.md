@@ -30,19 +30,19 @@ The library also contains an algorithm for quickly finding intersections between
 Excerpt from the example:
 
 ```cpp
-BVH::BVH<double> bvh(triangles); \\ creating the BVH structure from triangles
+BVH::BVH<double> bvh(triangles); // creating the BVH structure from triangles
 
 std::set<size_t> intersectsTriangles;
 
 for (size_t i = 0, numberOfTriangles = triangles.size(); i < numberOfTriangles; i++)
 {
-    std::vector<size_t> candidates;     \\ candidates for intersection with triangle i
-    bvh.potentialOverlaps(i, candidates); \\ looking for potential intersections 
+    std::vector<size_t> candidates;     // candidates for intersection with triangle i
+    bvh.potentialOverlaps(i, candidates); // looking for potential intersections 
 
     for (size_t j : candidates)
     {
         if (j <= i) continue;
-        if (triangles[i].is_intersect(triangles[j])) \\ checking for real intersection
+        if (triangles[i].is_intersect(triangles[j])) // checking for real intersection
         {
             intersectsTriangles.insert(i);
             intersectsTriangles.insert(j);
