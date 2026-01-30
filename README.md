@@ -13,6 +13,11 @@
 
 This project implements a C++ architecture utilizing SOLID principles and GoF design patterns (creational, structural, behavioral). It employs C++23 modules for code organization and CMake with Ninja generator for build automation. The system is structured as two independent libraries providing clear separation of concerns.
 
+> ⚠️ **Attentions:** This repository contains submodules. Clone with the flag `--recursive`:
+> ```bash
+> git clone --recursive https://github.com/Matvey787/Triangles_Rebellion.git
+> ```
+
 ---
 
 ## **Table of Contents**
