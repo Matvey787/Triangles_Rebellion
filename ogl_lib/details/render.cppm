@@ -93,33 +93,28 @@ class MeshManager final {
         size_t vertexCount = mesh->getVertexCount();
         auto color = mesh->getColor();
 
-        // Убедимся, что vertices содержит правильное количество элементов
         if (vertices.size() < vertexCount * 3) {
-            return; // Недостаточно данных
+            return;
         }
 
-        // Добавляем вершины и цвет в draftVBO
         for (size_t i = 0; i < vertices.size(); i += 3) {
-            // Позиция вершины
             bucketIter->draftVBO.push_back(vertices[i]);
             bucketIter->draftVBO.push_back(vertices[i + 1]);
             bucketIter->draftVBO.push_back(vertices[i + 2]);
 
-            // Цвет вершины
             bucketIter->draftVBO.push_back(color.rFloat());
             bucketIter->draftVBO.push_back(color.gFloat());
             bucketIter->draftVBO.push_back(color.bFloat());
             bucketIter->draftVBO.push_back(color.aFloat());
         }
 
-        // Обновляем данные в GPU
         glBindBuffer(GL_ARRAY_BUFFER, bucketIter->VBO_);
         glBufferData(GL_ARRAY_BUFFER, 
                      bucketIter->draftVBO.size() * sizeof(float), 
                      bucketIter->draftVBO.data(), 
                      mesh->isDynamic() ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
         
-        bucketIter->vertexDataSize = bucketIter->draftVBO.size() / 7; // 7 элементов на вершину
+        bucketIter->vertexDataSize = bucketIter->draftVBO.size() / 7;
         bucketIter->meshes_.push_back(mesh);
     }
 

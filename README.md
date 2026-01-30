@@ -87,8 +87,8 @@ Location: `geo_lib/`
 
 The OpenGL Library provides window management and OpenGL context abstraction using GLFW3. It handles window creation, OpenGL context management, and input processing.
 
-**Architecture:**
-Sorry, content will appear here later...
+**Architecture (uml diagram):**
+![uml](md_sources/uml.png)
 
 ### Examples
 

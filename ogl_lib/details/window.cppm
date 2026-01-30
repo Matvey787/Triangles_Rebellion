@@ -77,11 +77,11 @@ protected:
     void create() override {
         static bool gladInitialized = false;
 
-        if (glfwWindow) return;  // Окно уже создано
+        if (glfwWindow) return;  
         
         glfwDefaultWindowHints();
         
-        // OpenGL version
+        
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -90,7 +90,7 @@ protected:
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         
         glfwWindow = glfwCreateWindow(
-            static_cast<int>(config.width),  // Исправляем каст
+            static_cast<int>(config.width),  
             static_cast<int>(config.height),
             config.title.c_str(),
             nullptr,
