@@ -15,6 +15,7 @@ module;
 #include <algorithm>
 #include <iterator>
 #include <typeindex>
+#include <cstring>
 
 import color;
 import camera;
@@ -28,14 +29,14 @@ class IOGLMesh {
 public:
     virtual ~IOGLMesh() = default;
 
-    virtual std::vector<float> getVertexes() = 0;
+    virtual  const std::vector<float>& getVertexes() const = 0;
     virtual size_t getVertexCount() = 0;
     virtual OGLWrap::RGB_color getColor() = 0;
     virtual bool isDynamic() = 0;
 };
 
 class TriangleMesh final : public IOGLMesh {
-    Geo::Triangle<float> triangle_;
+    std::vector<float> vertexes_;
     OGLWrap::RGB_color color_ = OGLWrap::RGB_color{255, 255, 255};
     bool isDynamic_ = false;
     
@@ -43,18 +44,20 @@ public:
     TriangleMesh(const Geo::Triangle<float>& triangle, 
                  const OGLWrap::RGB_color& color = OGLWrap::RGB_color{255, 255, 255},
                  bool isDynamic = false) 
-        : triangle_(triangle), color_(color), isDynamic_(isDynamic) {}
-
-    std::vector<float> getVertexes() override {
-        std::vector<float> vertices;
-        for (int i = 0; i < 3; ++i) {
-            auto point = triangle_.getPoint(i);
-            vertices.push_back(point.x_);
-            vertices.push_back(point.y_);
-            vertices.push_back(point.z_);
+        : color_(color), isDynamic_(isDynamic) {
+            vertexes_.reserve(9);
+            for (int i = 0; i < 3; ++i) {
+                const auto& point = triangle.getPoint(i);
+                vertexes_.push_back(point.x_);
+                vertexes_.push_back(point.y_);
+                vertexes_.push_back(point.z_);
+            }
         }
-        return vertices;
+
+    const std::vector<float>& getVertexes() const override {
+        return vertexes_;
     }
+    
 
     OGLWrap::RGB_color getColor() override {
         return color_;
@@ -86,37 +89,49 @@ class MeshManager final {
 
     std::vector<BucketData> storage_;
 
-    void addToBucket(std::vector<BucketData>::iterator bucketIter, 
-                     const std::shared_ptr<IOGLMesh>& mesh) {
-        
-        auto vertices = mesh->getVertexes();
-        size_t vertexCount = mesh->getVertexCount();
-        auto color = mesh->getColor();
+    void addToBucket(std::vector<BucketData>::iterator bucketIter,
+                 const std::shared_ptr<IOGLMesh>& mesh)
+    {
+        const auto& vertices = mesh->getVertexes();
+        const size_t vertexCount = mesh->getVertexCount();
 
-        if (vertices.size() < vertexCount * 3) {
+        if (vertices.size() < vertexCount * 3)
             return;
-        }
 
-        for (size_t i = 0; i < vertices.size(); i += 3) {
-            bucketIter->draftVBO.push_back(vertices[i]);
-            bucketIter->draftVBO.push_back(vertices[i + 1]);
-            bucketIter->draftVBO.push_back(vertices[i + 2]);
+        const auto color = mesh->getColor();
 
-            bucketIter->draftVBO.push_back(color.rFloat());
-            bucketIter->draftVBO.push_back(color.gFloat());
-            bucketIter->draftVBO.push_back(color.bFloat());
-            bucketIter->draftVBO.push_back(color.aFloat());
+        const size_t floatsPerVertex = 7;
+        const size_t requiredSize = vertexCount * floatsPerVertex;
+
+        auto& vbo = bucketIter->draftVBO;
+        vbo.reserve(vbo.size() + requiredSize);
+
+        for (size_t i = 0; i < vertexCount; ++i) {
+            const size_t base = i * 3;
+
+            vbo.insert(vbo.end(), {
+                vertices[base],
+                vertices[base + 1],
+                vertices[base + 2],
+                color.rFloat(),
+                color.gFloat(),
+                color.bFloat(),
+                color.aFloat()
+            });
         }
 
         glBindBuffer(GL_ARRAY_BUFFER, bucketIter->VBO_);
-        glBufferData(GL_ARRAY_BUFFER, 
-                     bucketIter->draftVBO.size() * sizeof(float), 
-                     bucketIter->draftVBO.data(), 
-                     mesh->isDynamic() ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
-        
-        bucketIter->vertexDataSize = bucketIter->draftVBO.size() / 7;
+        glBufferData(
+            GL_ARRAY_BUFFER,
+            vbo.size() * sizeof(float),
+            vbo.data(),
+            mesh->isDynamic() ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW
+        );
+
+        bucketIter->vertexDataSize = vbo.size() / floatsPerVertex;
         bucketIter->meshes_.push_back(mesh);
     }
+
 
     void setupBucket(std::vector<BucketData>::iterator bucketIter) {
         glGenVertexArrays(1, &bucketIter->VAO_);

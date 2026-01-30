@@ -25,6 +25,7 @@ int main() {
         Geo::Triangle<float> triangle(p1, p2, p3);
         // Добавляем треугольник в окно
         w1->addTriangle(triangle);
+        w1->render();
     }
     
     auto w2 = OGLWrap::Win3DBuilder()

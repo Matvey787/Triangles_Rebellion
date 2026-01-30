@@ -194,6 +194,8 @@ public:
         addMesh(mesh);
     }
 
+    void addTriangle()
+
     void addMesh(const std::shared_ptr<IOGLMesh>& mesh) {
         render_->addMesh(mesh);
     }
