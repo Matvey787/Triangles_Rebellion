@@ -90,6 +90,9 @@ The OpenGL Library provides window management and OpenGL context abstraction usi
 **Architecture (uml diagram):**
 ![uml](md_sources/uml.png)
 
+**Cmake libraries dependency graph:**
+![alt deps](md_sources/deps.svg)
+
 ### Examples
 
 Location: `examples/ogl_lib/`
