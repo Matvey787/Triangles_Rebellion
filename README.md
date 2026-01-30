@@ -102,7 +102,7 @@ Location: `examples/ogl_lib/`
 cd examples/ogl_lib
 cmake -G=Ninja -S . -B build -DCMAKE_CXX_COMPILER=clang++
 cmake --build build
-./build/example1
+XDG_SESSION_TYPE=x11 GLFW_PLATFORM=x11 ./build/example1
 ```
 
 ### Source Code

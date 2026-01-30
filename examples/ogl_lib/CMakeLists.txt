@@ -12,13 +12,22 @@ add_subdirectory(${OGL_LIB_SOURCE_DIR} ${OGL_LIB_BINARY_DIR})
 
 # Example1 exe
 
-set(EXAMPLE1_EXE example1)
 
-add_executable(${EXAMPLE1_EXE}
-    ${CMAKE_CURRENT_SOURCE_DIR}/example1.cpp
+add_executable(1_example
+    ${CMAKE_CURRENT_SOURCE_DIR}/1_example.cpp
 )
 
-target_link_libraries(${EXAMPLE1_EXE}
+target_link_libraries(1_example
     PRIVATE
         ogl_lib
+)
+
+add_executable(2_intersections
+    ${CMAKE_CURRENT_SOURCE_DIR}/2_intersections.cpp
+)
+
+target_link_libraries(2_intersections
+    PRIVATE
+        ogl_lib
+        bvh_lib
 )
