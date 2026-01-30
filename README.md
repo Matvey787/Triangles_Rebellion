@@ -1,84 +1,124 @@
-# Geometry Library
+# **Triangles Rebellion**
 
-## Description
+## **Technology Stack**
+![C++](https://img.shields.io/badge/C++-23-blue?style=for-the-badge&logo=cplusplus)
+![CMake](https://img.shields.io/badge/CMake-3.28+-green?style=for-the-badge&logo=cmake)
+![Testing](https://img.shields.io/badge/Google_Test-Framework-red?style=for-the-badge&logo=google)
+![OpenGL API](https://img.shields.io/badge/OpenGL-API-5586A4?style=for-the-badge&logo=opengl)
+![Architecture](https://img.shields.io/badge/SOLID-OOP_Principles-4A90E2?style=for-the-badge&logo=diagram&logoColor=white)
 
+---
 
-The Geometry Library provides control over standard geometric containers such as points, vectors, lines, 
-and triangles.  
+## **Project Overview**
 
-All interfaces are located in the GEO namespace. Library header is `geo.hpp`. Below is a simple example of how to create points and triangles using the library:
+This project implements a C++ architecture utilizing SOLID principles and GoF design patterns (creational, structural, behavioral). It employs C++23 modules for code organization and CMake with Ninja generator for build automation. The system is structured as two independent libraries providing clear separation of concerns.
 
+---
+
+## **Table of Contents**
+
+1. [Geometry Library](#geometry-library)
+   - [Overview](#overview-1)
+   - [Examples](#examples-1)
+   - [Source Code](#source-code-1)
+
+2. [OpenGL Library](#opengl-library)
+   - [Overview](#overview-2)
+   - [Examples](#examples-2)
+   - [Source Code](#source-code-2)
+
+3. [Building Instructions](#building-instructions)
+
+---
+
+## **Geometry Library**
+
+### Overview
+
+The Geometry Library provides geometric primitives (points, vectors, lines, triangles) and spatial algorithms. All interfaces reside in the `GEO` namespace with the main header `geo.hpp`.
+
+**Key Features:**
+- Geometric primitives with template support
+- Bounding Volume Hierarchy (BVH) acceleration structure
+- Triangle intersection detection algorithms
+
+**Example Usage:**
 ```cpp
 #include "geo.hpp"
 
-int main() {
-    Geo::Point<float> p1(0.0f, 0.0f, 0.0f);
-    Geo::Point<float> p2(1.0f, 0.0f, 0.0f);
-    Geo::Point<float> p3(0.0f, 1.0f, 0.0f);
+// Create geometric primitives
+Geo::Point<float> p1(0.0f, 0.0f, 0.0f);
+Geo::Point<float> p2(1.0f, 0.0f, 0.0f);
+Geo::Point<float> p3(0.0f, 1.0f, 0.0f);
+Geo::Triangle<float> triangle(p1, p2, p3);
 
-    Geo::Triangle<float> triangle(p1, p2, p3);
-
-    Geo::Vector<float> normal = triangle.getNormal();
-
-    return 0;
-}
+// BVH intersection detection
+BVH::BVH<double> bvh(triangles);
+std::vector<size_t> candidates;
+bvh.potentialOverlaps(i, candidates);
 ```
 
-The library also contains an algorithm for quickly finding intersections between triangles (which is essentially the purpose of this library). The algorithm is called BVH (Bounding Volume Hierarchy). 
+### Examples
 
-Excerpt from the example:
+Location: `examples/geo_lib/`
 
-```cpp
-BVH::BVH<double> bvh(triangles); // creating the BVH structure from triangles
-
-std::set<size_t> intersectsTriangles;
-
-for (size_t i = 0, numberOfTriangles = triangles.size(); i < numberOfTriangles; i++)
-{
-    std::vector<size_t> candidates;     // candidates for intersection with triangle i
-    bvh.potentialOverlaps(i, candidates); // looking for potential intersections 
-
-    for (size_t j : candidates)
-    {
-        if (j <= i) continue;
-        if (triangles[i].is_intersect(triangles[j])) // checking for real intersection
-        {
-            intersectsTriangles.insert(i);
-            intersectsTriangles.insert(j);
-        }
-    }
-}
-```
-
-To compile the project, you need to enable the add_subdirectory(path/to/geo_lib) command in cmake, then add the geo_lib library to the targets that use this library. (Same with bvh_lib)
-
-Example you can find [here](examples/geo_lib/CMakeLists.txt)
-
-## Examples
-
-All examples can be found [here](examples/geo_lib/)
-
-To run the example, do the following:
-
+**Build and Run:**
 ```bash
-git clone https://github.com/Matvey787/Triangles_Rebellion.git
-
-cd Triangles_Rebellion
-
 cd examples/geo_lib
-
 cmake -G=Ninja -S . -B build -DCMAKE_CXX_COMPILER=clang++
-
-# If there are not enough dependencies after generation, install them.
-
-# Compile the example
 cmake --build build
-
-# Run
 ./build/intersection
-
 ```
 
-## Soureces
+### Source Code
 
-The source files are located [here](geo_lib/)
+Location: `geo_lib/`
+
+---
+
+## **OpenGL Library**
+
+### Overview
+
+The OpenGL Library provides window management and OpenGL context abstraction using GLFW3. It handles window creation, OpenGL context management, and input processing.
+
+**Architecture:**
+Sorry, content will appear here later...
+
+### Examples
+
+Location: `examples/ogl_lib/`
+
+**Build and Run:**
+```bash
+cd examples/ogl_lib
+cmake -G=Ninja -S . -B build -DCMAKE_CXX_COMPILER=clang++
+cmake --build build
+./build/example1
+```
+
+### Source Code
+
+Location: `ogl_lib/`
+
+---
+
+## **Building Instructions**
+
+**Project Integration:**
+```cmake
+# Add libraries to your CMake project
+add_subdirectory(path/to/geo_lib)
+add_subdirectory(path/to/ogl_lib)
+
+# Link against libraries
+target_link_libraries(your_target PRIVATE geo_lib ogl_lib)
+```
+
+**Dependencies:**
+- C++23 compatible compiler (Clang recommended)
+- CMake 3.28 or higher
+- GLFW3 (for OpenGL library)
+- Google Test (optional, for testing)
+
+**Repository:** https://github.com/Matvey787/Triangles_Rebellion
