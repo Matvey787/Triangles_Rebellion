@@ -13,6 +13,8 @@
 
 This project implements a C++ architecture utilizing SOLID principles and GoF design patterns (creational, structural, behavioral). It employs C++23 modules for code organization and CMake with Ninja generator for build automation. The system is structured as two independent libraries providing clear separation of concerns.
 
+![gif](md_sources/triangles_rebellion.gif)
+
 > ⚠️ **Attentions:** This repository contains submodules. Clone with the flag `--recursive`:
 > ```bash
 > git clone --recursive https://github.com/Matvey787/Triangles_Rebellion.git
@@ -102,7 +104,7 @@ Location: `examples/ogl_lib/`
 cd examples/ogl_lib
 cmake -G=Ninja -S . -B build -DCMAKE_CXX_COMPILER=clang++
 cmake --build build
-XDG_SESSION_TYPE=x11 GLFW_PLATFORM=x11 ./build/example1
+XDG_SESSION_TYPE=x11 GLFW_PLATFORM=x11 ./build/exe_you_want_to_run
 ```
 
 ### Source Code
