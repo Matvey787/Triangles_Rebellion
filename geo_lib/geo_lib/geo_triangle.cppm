@@ -69,6 +69,13 @@ public:
         default: throw std::out_of_range("Invalid line index");
         }
     }
+
+    // FIXME Just for old tests compatibility (gtests). Remove later.
+    bool
+    is_intersect(Triangle<T>& anotherTriangle)
+    {
+        return isIntersect(*this, anotherTriangle);
+    }
 };
 
 
@@ -89,8 +96,6 @@ public:
 
 
 
-
-enum class planes_t { XY, XZ, YZ };
 
 /// @brief Check intersection of a this triangle with a triangle
 /// @tparam T floating point type
@@ -113,6 +118,8 @@ operator<<(std::ostream& os, const Triangle<T>& triangle);
 } // namespace Geo
 
 
+
+enum class planes_t { XY, XZ, YZ };
 
 
 /// @brief Find a normal vector of the triangle plane
