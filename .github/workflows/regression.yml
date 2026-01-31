@@ -20,11 +20,11 @@ jobs:
           sudo apt-get install -y \
             cmake \
             g++ \
-            clang++ \
+            clang \
             ninja-build \
-            clang-tidy \
             libgtest-dev \
             libgmock-dev
+          sudo apt-get install -y clang-tidy || echo "clang-tidy optional"
 
       - name: Configure with CMake and Ninja
         working-directory: ./tests/GEOLib/tester
