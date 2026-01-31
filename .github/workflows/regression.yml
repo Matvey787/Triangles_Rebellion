@@ -20,11 +20,11 @@ jobs:
           sudo apt-get install -y \
             cmake \
             g++ \
-            clang++ \
+            clang \
             ninja-build \
-            clang-tidy \
             libgtest-dev \
             libgmock-dev
+          sudo apt-get install -y clang-tidy || echo "clang-tidy optional"
 
       - name: Configure with CMake and Ninja
         working-directory: ./tests/GEOLib/tester
@@ -82,7 +82,7 @@ jobs:
 
       - name: Upload test artifacts (optional)
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-results
           path: |
