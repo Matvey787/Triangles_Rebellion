@@ -1,7 +1,7 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.28)
 project(LIRS_Cache LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 20) 
+set(CMAKE_CXX_STANDARD 23) 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # -------------------------------------------------------------------------------------------------
@@ -19,20 +19,30 @@ target_compile_features(${DOUBLE_LIB} INTERFACE ${CXX_STANDARD})
 # -------------------------------------------------------------------------------------------------
 # Geo (point, vector, line, triangle libs)
 set(GEO_LIB geo_lib)
-add_library(${GEO_LIB} INTERFACE)
+add_library(${GEO_LIB})
 
-target_link_libraries(${GEO_LIB}
-    INTERFACE
-        ${DOUBLE_LIB}
+file(GLOB_RECURSE GEO_MODULES 
+    "${CMAKE_CURRENT_SOURCE_DIR}/geo_lib/*.cppm"
 )
 
-target_include_directories(${GEO_LIB}
-    INTERFACE
-        geo_lib/Point/inc
-        geo_lib/Vector/inc
-        geo_lib/Line/inc
-        geo_lib/Triangle/inc
-        geo_lib/
+message(STATUS "Geo modules: ${GEO_MODULES}")
+
+target_sources(${GEO_LIB}
+    PUBLIC
+        FILE_SET
+            CXX_MODULES
+        TYPE
+            CXX_MODULES
+        BASE_DIRS
+            ${CMAKE_CURRENT_SOURCE_DIR}
+        FILES
+            ${GEO_MODULES}
+)
+
+
+target_link_libraries(${GEO_LIB}
+    PRIVATE
+        ${DOUBLE_LIB}
 )
 
 # -------------------------------------------------------------------------------------------------
