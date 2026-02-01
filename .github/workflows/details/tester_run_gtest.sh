@@ -6,23 +6,22 @@ function run_tester_gtest() {
 
     echo "Handling ${tester_ref[NAME]}"
 
-    echo "Going to tester dir"
     cd "${tester_ref[PATH]}"
-
     echo "Trying to generate a build system"
-    cmake "cmake -G Ninja -S . -B build -DCMAKE_CXX_COMPILER=clang++ ${tester_ref[CMAKE_OPTIONS]}"
+    cmake -G=Ninja -S . -B "build" -DCMAKE_CXX_COMPILER=clang++ ${tester_ref[CMAKE_OPTIONS]}
+    cd -
 
     echo "Building gtest"
-    cmake --build build
+    cmake --build "${tester_ref[PATH]}/build"
 
     echo "Running gtests"
     IFS=' ' read -ra EXE_FILES <<< "${tester_ref[GTEST_EXE_FILE_NAMES]}"
 
     for exe_file in "${EXE_FILES[@]}"; do
-        TEST_EXE="./build/${exe_file}"
+        TEST_EXE="./${tester_ref[PATH]}/build/${exe_file}"
         
         echo "Executing: $TEST_EXE"
-        "$TEST_EXE" --gtest_output=xml:"build/${exe_file}-results.xml"
+        "$TEST_EXE" --gtest_output=xml:"${tester_ref[PATH]}/build/${exe_file}-results.xml"
         GTEST_EXIT_CODE=$?
         
         if [[ $GTEST_EXIT_CODE -ne 0 ]]; then
