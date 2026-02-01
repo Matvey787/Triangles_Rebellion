@@ -1,10 +1,13 @@
+import geo_lib;
+
+#include "bvh.hpp"
+
 #include <iostream>
 #include <set>
 #include <sstream>
 #include <fstream>
 #include <algorithm>
-#include "geo.hpp"
-#include "bvh.hpp"
+
 
 std::vector<Geo::Triangle<double>> input_stdin();
 std::vector<Geo::Triangle<double>> input_fstream(std::string_view fileName);
@@ -35,7 +38,7 @@ int main(int argc, const char* argv[])
         for (size_t j : candidates)
         {
             if (j <= i) continue;
-            if (triangles[i].is_intersect(triangles[j]))
+            if (Geo::isIntersect(triangles[i], triangles[j]))
             {
                 intersectsTriangles.insert(i);
                 intersectsTriangles.insert(j);

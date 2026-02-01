@@ -1,6 +1,6 @@
 module;
 
-#include "geo.h"
+#include "geo.hpp"
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -77,11 +77,11 @@ protected:
     void create() override {
         static bool gladInitialized = false;
 
-        if (glfwWindow) return;  // Окно уже создано
+        if (glfwWindow) return;  
         
         glfwDefaultWindowHints();
         
-        // OpenGL version
+        
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -90,7 +90,7 @@ protected:
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         
         glfwWindow = glfwCreateWindow(
-            static_cast<int>(config.width),  // Исправляем каст
+            static_cast<int>(config.width),  
             static_cast<int>(config.height),
             config.title.c_str(),
             nullptr,
@@ -187,7 +187,7 @@ public:
         inputService_->handleMouseEvents();
     }
 
-    void addTriangle(const Geo::Triangle& triangle, const RGB_color& color = RGB_color{255, 255, 255}) {
+    void addTriangle(const Geo::Triangle<float>& triangle, const RGB_color& color = RGB_color{255, 255, 255}) {
 
         std::shared_ptr<IOGLMesh> mesh = std::make_shared<TriangleMesh>(triangle, color);
         

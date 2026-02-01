@@ -63,6 +63,6 @@ def plot_triangles(triangles, filename):
     plt.show()
 
 if __name__ == "__main__":
-    filename = "tests/test22.dat"
+    filename = "/home/matvey/work/Triangles_Rebellion/tests/GEOLib/e2e/dat/test7.dat"
     triangles = read_triangles(filename)
     plot_triangles(triangles, filename)
