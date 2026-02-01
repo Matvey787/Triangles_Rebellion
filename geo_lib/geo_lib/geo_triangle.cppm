@@ -255,7 +255,7 @@ isPointBelongsTriangle(const Geo::Point<T>& p, const Geo::Triangle<T>& t);
 /// @return True if triangles are parallel, false - otherwise
 template<typename T>
 bool
-isParallel(const Geo::Triangle<T>& t1, const Geo::Triangle<T>& t2);
+isInSamePlane(const Geo::Triangle<T>& t1, const Geo::Triangle<T>& t2);
 
 
 
@@ -626,7 +626,7 @@ isPointBelongsTriangle(const Geo::Point<T>& p, const Geo::Triangle<T>& t)
 
 
 template<typename T>
-bool isParallel(const Geo::Triangle<T>& t1, const Geo::Triangle<T>& t2)
+bool isInSamePlane(const Geo::Triangle<T>& t1, const Geo::Triangle<T>& t2)
 {
     auto n1 = getNormal(t1);
     auto n2 = getNormal(t2);
@@ -637,15 +637,24 @@ bool isParallel(const Geo::Triangle<T>& t1, const Geo::Triangle<T>& t2)
     }
     
     const auto& p1 = t1.getPoint(0);
-    const auto& p2 = t2.getPoint(0);
+
+    const auto& p1_t2 = t2.getPoint(0);
+    const auto& p2_t2 = t2.getPoint(1);
+    const auto& p3_t2 = t2.getPoint(2);
     
-    Geo::Vector<T> vec(p1, p2);
+    Geo::Vector<T> vec1(p1, p1_t2);
+    Geo::Vector<T> vec2(p1, p2_t2);
+    Geo::Vector<T> vec3(p1, p3_t2);
     
-    T mixed = scalar(vec, n1);
+    T mixed1 = scalar(vec1, n1);
+    T mixed2 = scalar(vec2, n1);
+    T mixed3 = scalar(vec3, n1);
     
-    bool samePlane = std::abs(mixed) < std::numeric_limits<T>::epsilon();
+    bool samePlane = std::abs(mixed1) < std::numeric_limits<T>::epsilon() && 
+                     std::abs(mixed2) < std::numeric_limits<T>::epsilon() && 
+                     std::abs(mixed3) < std::numeric_limits<T>::epsilon();
     
-    return true;
+    return samePlane;
 }
 
 
@@ -690,7 +699,7 @@ Geo::isIntersect(const Geo::Triangle<T>& t1, const Geo::Triangle<T>& t2)
         return isPointBelongsTriangle(p1_t2, t1);
     }
     
-    if (::isParallel(t1, t2))
+    if (::isInSamePlane(t1, t2))
     {
         return intersect2D(t1, t2);
     }
