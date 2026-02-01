@@ -1,20 +1,20 @@
 source "$(dirname "$0")/../project_setup.sh"
 
-function run_tester_ctest() {
+function create_exe_for_ctest() {
     local tester_name="$1"
     declare -n tester_ref="$tester_name"
 
-    echo "Handling ${tester_ref[NAME]} (ctest)"
+    echo "Create exe for ctest in ${tester_ref[NAME]}"
 
     local original_dir="$(pwd)"
     
-    if ! cd "${tester_ref[PATH]}"; then
-        echo "❌ Cannot cd to ${tester_ref[PATH]}"
+    if ! cd "${tester_ref[CTEST_CHECKED_PROJECT]}"; then
+        echo "❌ Cannot cd to ${tester_ref[CTEST_CHECKED_PROJECT]}"
         return 1
     fi
     
     echo "Trying to generate a build system"
-    cmake -G="${CMAKE_GENERATOR}" -S . -B "build" -DCMAKE_CXX_COMPILER="${CMAKE_COMPILER}" ${tester_ref[CMAKE_OPTIONS]}
+    cmake -G="${CMAKE_GENERATOR}" -S . -B "build" -DCMAKE_CXX_COMPILER="${CMAKE_COMPILER}" ${tester_ref[CTEST_CHECKED_PROJECT_CMAKE_OPTIONS]}
     local CMAKE_EXIT_CODE=$?
 
     if [[ $CMAKE_EXIT_CODE -ne 0 ]]; then
@@ -23,20 +23,20 @@ function run_tester_ctest() {
         cd "$original_dir" || return 1
         return $CMAKE_EXIT_CODE
     fi
-
-    echo "Running ctest"
-    if ctest --test-dir build -V --output-on-failure; then
-        echo "✅ CTest passed for ${tester_ref[NAME]}"
-        local CTEST_EXIT_CODE=0
-    else
-        local CTEST_EXIT_CODE=$?
-        echo "❌ CTest failed for ${tester_ref[NAME]} with exit code: $CTEST_EXIT_CODE"
+    
+    echo "Building executable"
+    if ! cmake --build build; then
+        echo "❌ Build failed"
+        rm -rf build
+        cd "$original_dir" || return 1
+        return 1
     fi
 
-    rm -rf build
+    echo "✅ Executable created successfully"
+    
     cd "$original_dir" || return 1
     
-    return $CTEST_EXIT_CODE
+    return 0
 }
 
 function tester_exists() {
@@ -53,15 +53,15 @@ overall_result=0
 for tester in "${ALL_TESTERS[@]}"; do
     if tester_exists "$tester"; then
         declare -n tester_ref="$tester"
-        echo "=== Processing ${tester_ref[NAME]} (CTest) ==="
+        echo "=== Creating exe for ctest of ${tester_ref[NAME]} ==="
         
-        run_tester_ctest "$tester"
+        create_exe_for_ctest "$tester"
         local exit_code=$?
         
         if [[ $exit_code -eq 0 ]]; then
-            echo "✅ CTest completed successfully in ${tester_ref[NAME]}."
+            echo "✅ Executable created successfully for ${tester_ref[NAME]}."
         else
-            echo "❌ CTest failed in ${tester_ref[NAME]} with exit code: $exit_code."
+            echo "❌ Failed to create executable for ${tester_ref[NAME]} with exit code: $exit_code."
             overall_result=1
         fi
         echo ""

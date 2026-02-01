@@ -19,9 +19,15 @@ jobs:
           - name: Installing project dependencies
             run: ./.github/workflows/details/install_deps.sh
 
-          - name: Run gtests
+          - name: Build & run gtests
             run: ./.github/workflows/details/tester_run_gtest.sh
-            
+
+          - name: Build projects for ctests
+            run: ./.github/workflows/details/tester_create_exe_for_ctest.sh
+
+          - name: Build & run ctests
+            run: ./.github/workflows/details/tester_run_ctest.sh
+
           - name: Upload test summary
             if: always()
             run: |
