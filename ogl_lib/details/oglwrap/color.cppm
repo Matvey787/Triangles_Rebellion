@@ -21,7 +21,7 @@ public:
     float aFloat() const { return a / 255.0f; }
 };
 
-class ColorFactory {
+class ColorFactory final {
 public:
     static RGB_color fromName(std::string name)
     {

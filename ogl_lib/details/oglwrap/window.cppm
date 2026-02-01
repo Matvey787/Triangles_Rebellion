@@ -21,7 +21,7 @@ import geo_lib;
 
 export namespace OGLWrap {
 
-class WinConfig {
+class WinConfig final {
 public:
     size_t      width      = 600;
     size_t      height     = 400;
@@ -154,7 +154,7 @@ protected:
 };
 
 
-class Win3D : public GLFWWin {
+class Win3D final : public GLFWWin {
 private:
     std::unique_ptr<IRender> render_;
     std::unique_ptr<InputService> inputService_;

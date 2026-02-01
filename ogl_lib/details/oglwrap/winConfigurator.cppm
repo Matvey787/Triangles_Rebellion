@@ -22,7 +22,7 @@ public:
     virtual ~IBuilder() = default;
 };
 
-class Win3DBuilder : public IBuilder {
+class Win3DBuilder final : public IBuilder {
     WinConfig config_;
 
 public:

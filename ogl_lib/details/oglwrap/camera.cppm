@@ -41,7 +41,7 @@ public:
     virtual ~ICamera() = default;
 };
 
-class XYZCamera : public ICamera {
+class XYZCamera final : public ICamera {
 private:
     float yaw = -90.0f;   // Начинаем смотрящим вдоль отрицательной оси Z
     float pitch = 0.0f;
@@ -161,7 +161,7 @@ public:
     virtual ~CameraCommand() = default;
 };
 
-class MoveForwardCommand : public CameraCommand {
+class MoveForwardCommand final : public CameraCommand {
 public:
     using CameraCommand::CameraCommand;
     
@@ -170,7 +170,7 @@ public:
     }
 };
 
-class MoveBackwardCommand : public CameraCommand {
+class MoveBackwardCommand final : public CameraCommand {
 public:
     using CameraCommand::CameraCommand;
     
@@ -179,7 +179,7 @@ public:
     }
 };
 
-class MoveLeftCommand : public CameraCommand {
+class MoveLeftCommand final : public CameraCommand {
 public:
     using CameraCommand::CameraCommand;
     
@@ -188,7 +188,7 @@ public:
     }
 };
 
-class MoveRightCommand : public CameraCommand {
+class MoveRightCommand final : public CameraCommand {
 public:
     using CameraCommand::CameraCommand;
     
@@ -220,7 +220,7 @@ public:
 // };
 
 
-class CameraController : public IInputListener {
+class CameraController final : public IInputListener {
     std::shared_ptr<ICamera> camera_;
     std::unordered_map<int, std::shared_ptr<ICameraCommand>> keyBindings_;
 

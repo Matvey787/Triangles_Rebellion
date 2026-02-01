@@ -17,7 +17,7 @@ export module input;
 
 export namespace OGLWrap {
 
-class KeyEvent {
+class KeyEvent final {
 public:
     int key;
 
@@ -149,7 +149,7 @@ public:
     }
 };
 
-class InputService {
+class InputService final {
     InputDispatcher inputDispatcher_;
     std::unique_ptr<InputManager> inputManager_;
 
