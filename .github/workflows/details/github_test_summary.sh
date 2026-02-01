@@ -27,5 +27,5 @@ for i in "${!ALL_TESTERS[@]}"; do
         echo "$((i+1)). [${tester_ref[NAME]}](${tester_ref[PATH]})" >> "$GITHUB_STEP_SUMMARY"
     fi
 done
-
+echo "" >> $GITHUB_STEP_SUMMARY
 echo "Finished at $(date)" >> $GITHUB_STEP_SUMMARY
