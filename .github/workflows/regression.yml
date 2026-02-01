@@ -49,7 +49,6 @@ jobs:
           else
             echo "clang-tidy target not found, skipping..."
           fi
-
       - name: Run tests with gtest
         working-directory: ./tests/GEOLib/tester
         run: |
@@ -64,7 +63,10 @@ jobs:
             echo "❌ Test executable not found!"
             exit 1
           fi
-
+      - name: Compile exe for ctest
+        working-directory: ./examples/geo_lib
+        run: |
+          cmake -G Ninja -S . -B build -DCMAKE_CXX_COMPILER=clang++ && cmake --build build
       - name: Run ctest for better reporting
         working-directory: ./tests/GEOLib/tester
         run: |
