@@ -40,15 +40,18 @@ target_include_directories(${GLAD_LIB}
 
 # GLM Lib 
 
-set(GLM_LIB glm_lib)
-add_library(${GLM_LIB} INTERFACE)
+set(GLM_LIB glm)
 
-set(GLM_INC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/details/glm)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/details/glm)
 
-target_include_directories(${GLM_LIB}
-    INTERFACE
-        ${GLM_INC_DIR}
-)
+# add_library(${GLM_LIB} INTERFACE)
+
+# set(GLM_INC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/details/glm)
+
+# target_include_directories(${GLM_LIB}
+#     INTERFACE
+#         ${GLM_INC_DIR}
+# )
 
 
 # OGLWrap Lib
@@ -57,7 +60,7 @@ set(OGL_LIB ogl_lib)
 add_library(${OGL_LIB})
 
 file(GLOB OGL_MODULES 
-    "${CMAKE_CURRENT_SOURCE_DIR}/details/*.cppm"
+    "${CMAKE_CURRENT_SOURCE_DIR}/details/oglwrap/*.cppm"
 )
 
 target_sources(${OGL_LIB}

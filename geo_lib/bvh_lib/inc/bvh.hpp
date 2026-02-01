@@ -1,8 +1,11 @@
 #pragma once
+
+import geo_triangle;
+
 #include <vector>
 #include <memory>
 #include <algorithm>
-#include "geo_triangle.hpp"
+#include <iostream>
 
 namespace BVH {
 
@@ -20,12 +23,12 @@ struct AABB {
     /// @brief Расширить коробку новой точкой
     void
     expand(const Geo::Point<T>& p) {
-        min_.x_ = std::min(min_.x_, p.x_);
-        min_.y_ = std::min(min_.y_, p.y_);
-        min_.z_ = std::min(min_.z_, p.z_);
-        max_.x_ = std::max(max_.x_, p.x_);
-        max_.y_ = std::max(max_.y_, p.y_);
-        max_.z_ = std::max(max_.z_, p.z_);
+        min_.setX(std::min(min_[0], p[0]));
+        min_.setY(std::min(min_[1], p[1]));
+        min_.setZ(std::min(min_[2], p[2]));
+        max_.setX(std::max(max_[0], p[0]));
+        max_.setY(std::max(max_[1], p[1]));
+        max_.setZ(std::max(max_[2], p[2]));
     }
 
     /// @brief Расширить коробку другим AABB
@@ -38,25 +41,29 @@ struct AABB {
     Geo::Point<T>
     center() const {
         return Geo::Point<T>(
-            (min_.x_ + max_.x_) * 0.5,
-            (min_.y_ + max_.y_) * 0.5,
-            (min_.z_ + max_.z_) * 0.5
+            (min_.getX() + max_.getX()) * 0.5,
+            (min_.getY() + max_.getY()) * 0.5,
+            (min_.getZ() + max_.getZ()) * 0.5
         );
     }
 
     /// @brief Получить наибольшую ось коробки
-    int longestAxis() const {
-        Geo::Point size(max_.x_ - min_.x_, max_.y_ - min_.y_, max_.z_ - min_.z_);
-        if (size.x_ > size.y_ && size.x_ > size.z_) return 0;
-        if (size.y_ > size.z_) return 1;
+    int longestAxis() const
+    {
+        Geo::Point size(max_[0] - min_[0],
+                        max_[1] - min_[1],
+                        max_[2] - min_[2]);
+
+        if (size.getX() > size.getY() && size.getX() > size.getZ()) return 0;
+        if (size.getY() > size.getZ()) return 1;
         return 2;
     }
 
     /// @brief Проверка на пересечение с другой коробкой
     bool intersects(const AABB<T>& other) const {
-        return (min_.x_ <= other.max_.x_ && max_.x_ >= other.min_.x_) &&
-               (min_.y_ <= other.max_.y_ && max_.y_ >= other.min_.y_) &&
-               (min_.z_ <= other.max_.z_ && max_.z_ >= other.min_.z_);
+        return (min_.getX() <= other.max_.getX() && max_.getX() >= other.min_.getX()) &&
+               (min_.getY() <= other.max_.getY() && max_.getY() >= other.min_.getY()) &&
+               (min_.getZ() <= other.max_.getZ() && max_.getZ() >= other.min_.getZ());
     }
 }; // AABB
 

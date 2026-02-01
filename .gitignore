@@ -2,7 +2,9 @@
 build
 .vscode/
 settings.json
-*.png
 Doxyfile
 assets/
 contents/
+trash
+regression_old.yml
+.VSCodeCounter/

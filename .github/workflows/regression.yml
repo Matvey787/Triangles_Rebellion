@@ -1,4 +1,4 @@
-name: Regression Tests
+name: Regression tests
 
 on:
   push:
@@ -7,31 +7,28 @@ on:
     branches: [ main, develop ]
 
 jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
+    build-and-test:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout repository
+            uses: actions/checkout@v4
+          
+          - name: Giving permission to run the details folder
+            run: chmod +x .github/workflows/details/*.sh
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+          - name: Installing project dependencies
+            run: ./.github/workflows/details/install_deps.sh
 
-      - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y cmake g++ clang-tidy make
+          - name: Build & run gtests
+            run: ./.github/workflows/details/tester_run_gtest.sh
 
-      - name: Run cmake
-        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=ON -DBUILD_EXECUTABLE=OFF && cmake --build build
+          - name: Build projects for ctests
+            run: ./.github/workflows/details/tester_create_exe_for_ctest.sh
 
-      - name: Run clang-tidy
-        run: cmake --build build --target clang-tidy || true
+          - name: Build & run ctests
+            run: ./.github/workflows/details/tester_run_ctest.sh
 
-      - name: Build project
-        run: cmake --build build -- -j$(nproc)
+          - name: Upload test summary
+            if: always()
+            run: ./.github/workflows/details/github_test_summary.sh
 
-      - name: Run regression tests
-        run: ./build/tests/geo_tests --gtest_output=xml:test-results.xml || (echo "❌ Tests failed!" && exit 1)
-
-      - name: Upload test summary
-        if: always()
-        run: |
-          echo "Test Summary" >> $GITHUB_STEP_SUMMARY
-          echo "Build and tests finished at $(date)" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
