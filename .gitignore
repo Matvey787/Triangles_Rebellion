@@ -5,3 +5,5 @@ settings.json
 Doxyfile
 assets/
 contents/
+trash
+regression_old.yml

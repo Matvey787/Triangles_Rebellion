@@ -7,113 +7,44 @@ on:
     branches: [ main, develop ]
 
 jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            cmake \
-            g++ \
-            clang \
-            ninja-build \
-            libgtest-dev \
-            libgmock-dev
-          sudo apt-get install -y clang-tidy || echo "clang-tidy optional"
-
-      - name: Configure with CMake and Ninja
-        working-directory: ./tests/GEOLib/tester
-        run: |
-          cmake -G Ninja \
-                -S . \
-                -B build \
-                -DCMAKE_CXX_COMPILER=clang++ \
-                -DGTEST=ON \
-                -DCTEST=ON \
-                -DCMAKE_BUILD_TYPE=Debug
-
-      - name: Build with Ninja
-        working-directory: ./tests/GEOLib/tester
-        run: cmake --build build -- -j$(nproc)
-
-      - name: Run clang-tidy
-        working-directory: ./tests/GEOLib/tester
-        run: |
-          if cmake --build build --target help | grep -q clang-tidy; then
-            cmake --build build --target clang-tidy || true
-          else
-            echo "clang-tidy target not found, skipping..."
-          fi
-      - name: Run tests with gtest
-        working-directory: ./tests/GEOLib/tester
-        run: |
-          if [ -f "./build/geo_tests" ]; then
-            ./build/geo_tests --gtest_output=xml:test-results.xml
-            TEST_EXIT_CODE=$?
-            if [ $TEST_EXIT_CODE -ne 0 ]; then
-              echo "❌ GTest failed with exit code: $TEST_EXIT_CODE"
-              exit 1
-            fi
-          else
-            echo "❌ Test executable not found!"
-            exit 1
-          fi
-      - name: Compile exe for ctest
-        working-directory: ./examples/geo_lib
-        run: |
-          cmake -G Ninja -S . -B build -DCMAKE_CXX_COMPILER=clang++ && cmake --build build
-      - name: Run ctest for better reporting
-        working-directory: ./tests/GEOLib/tester
-        run: |
-          if [ -d "./build" ]; then
-            ctest --test-dir build -V --output-on-failure
-            CTEST_EXIT_CODE=$?
-            if [ $CTEST_EXIT_CODE -ne 0 ]; then
-              echo "❌ CTest failed with exit code: $CTEST_EXIT_CODE"
-              exit 1
-            fi
-          else
-            echo "❌ Build directory not found!"
-            exit 1
-          fi
-
-      - name: Upload test artifacts (optional)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results
-          path: |
-            tests/GEOLib/tester/test-results.xml
-            tests/GEOLib/tester/build/Testing/**/*.xml
-
-      - name: Upload test summary
-        if: always()
-        run: |
-          echo "## Test Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**✅ Build completed successfully**" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
+    build-and-test:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout repository
+            uses: actions/checkout@v4
           
-          if [ -f "tests/GEOLib/tester/test-results.xml" ]; then
-            echo "**📊 GTest Results:**" >> $GITHUB_STEP_SUMMARY
+          - name: Giving permission to run the details folder
+            run: chmod +x details/*.sh
 
-            tests=$(grep -o 'tests="[^"]*"' tests/GEOLib/tester/test-results.xml | head -1 | cut -d'"' -f2)
-            FAILURES=$(grep -o 'failures="[^"]*"' tests/GEOLib/tester/test-results.xml | head -1 | cut -d'"' -f2)
-            echo "- Total tests: $tests" >> $GITHUB_STEP_SUMMARY
-            echo "- Failures: $FAILURES" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-          fi
-          
-          echo "**Build Info:**" >> $GITHUB_STEP_SUMMARY
-          echo "- Generator: Ninja" >> $GITHUB_STEP_SUMMARY
-          echo "- Compiler: clang++" >> $GITHUB_STEP_SUMMARY
-          echo "- Build type: Debug" >> $GITHUB_STEP_SUMMARY
-          echo "- GTest: ON" >> $GITHUB_STEP_SUMMARY
-          echo "- CTest: ON" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Finished at $(date)" >> $GITHUB_STEP_SUMMARY
+          - name: Installing project dependencies
+            run: ./details/install_deps.bash
+
+          - name: Run gtests
+            run: ./details/tester_run_gtest.sh
+            
+          - name: Upload test summary
+            if: always()
+            run: |
+              echo "## Test Summary" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "**✅ Build completed successfully**" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              
+              if [ -f "tests/GEOLib/tester/build/test-results.xml" ]; then
+                  echo "**📊 GTest Results:**" >> $GITHUB_STEP_SUMMARY
+
+                  tests=$(grep -o 'tests="[^"]*"' tests/GEOLib/tester/build/test-results.xml | head -1 | cut -d'"' -f2)
+                  FAILURES=$(grep -o 'failures="[^"]*"' tests/GEOLib/tester/build/test-results.xml | head -1 | cut -d'"' -f2)
+                  echo "- Total tests: $tests" >> $GITHUB_STEP_SUMMARY
+                  echo "- Failures: $FAILURES" >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+              fi
+              
+              echo "**Build Info:**" >> $GITHUB_STEP_SUMMARY
+              echo "- Generator: Ninja" >> $GITHUB_STEP_SUMMARY
+              echo "- Compiler: clang++" >> $GITHUB_STEP_SUMMARY
+              echo "- Build type: Debug" >> $GITHUB_STEP_SUMMARY
+              echo "- GTest: ON" >> $GITHUB_STEP_SUMMARY
+              echo "- CTest: ON" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "Finished at $(date)" >> $GITHUB_STEP_SUMMARY

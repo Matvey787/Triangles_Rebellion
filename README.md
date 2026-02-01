@@ -6,7 +6,7 @@
 ![Testing](https://img.shields.io/badge/Google_Test-Framework-red?style=for-the-badge&logo=google)
 ![OpenGL API](https://img.shields.io/badge/OpenGL-API-5586A4?style=for-the-badge&logo=opengl)
 ![Architecture](https://img.shields.io/badge/SOLID-OOP_Principles-4A90E2?style=for-the-badge&logo=diagram&logoColor=white)
-
+![CI/CD](https://img.shields.io/badge/CI/CD-Pipeline-2496ED?style=for-the-badge&logo=githubactions&logoColor=white)
 ---
 
 ## **Project Overview**
