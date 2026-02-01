@@ -7,6 +7,7 @@ echo "" >> $GITHUB_STEP_SUMMARY
 echo "**Build Info:**" >> $GITHUB_STEP_SUMMARY
 echo "- Generator: ${CMAKE_GENERATOR}" >> $GITHUB_STEP_SUMMARY
 echo "- Compiler: ${CMAKE_COMPILER}" >> $GITHUB_STEP_SUMMARY
+echo "" >> $GITHUB_STEP_SUMMARY
 
 function tester_exists() {
     local var_name="$1"
