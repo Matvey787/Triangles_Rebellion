@@ -17,10 +17,10 @@ jobs:
             run: chmod +x .github/workflows/details/*.sh
 
           - name: Installing project dependencies
-            run: ./details/install_deps.bash
+            run: ./.github/workflows/details/install_deps.bash
 
           - name: Run gtests
-            run: ./details/tester_run_gtest.sh
+            run: ./.github/workflows/details/tester_run_gtest.sh
             
           - name: Upload test summary
             if: always()
