@@ -24,7 +24,12 @@ for i in "${!ALL_TESTERS[@]}"; do
     tester="${ALL_TESTERS[i]}"
     if tester_exists "$tester"; then
         declare -n tester_ref="$tester"
-        echo "$((i+1)). [${tester_ref[NAME]}](${tester_ref[PATH]})" >> "$GITHUB_STEP_SUMMARY"
+
+        REPO_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}"
+        BRANCH="${GITHUB_REF_NAME}"
+        FULL_PATH="${REPO_URL}/tree/${BRANCH}/${tester_ref[PATH]}"
+
+        echo "${i}. [${tester_ref[NAME]}](${FULL_PATH})" >> "$GITHUB_STEP_SUMMARY"
     fi
 done
 echo "" >> $GITHUB_STEP_SUMMARY
