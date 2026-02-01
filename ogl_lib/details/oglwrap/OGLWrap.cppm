@@ -4,7 +4,6 @@ module;
 #include <GLFW/glfw3.h>
 #include "glad/glad.h"
 
-#include "geo.hpp"
 
 export module OGLWrap;
 

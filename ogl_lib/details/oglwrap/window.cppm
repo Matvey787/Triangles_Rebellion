@@ -1,7 +1,5 @@
 module;
 
-#include "geo.hpp"
-
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
@@ -12,12 +10,14 @@ module;
 #include <stdexcept>
 #include <string_view>
 
+
+export module window;
+
 import color;
 import render;
 import input;
 import camera;
-
-export module window;
+import geo_lib;
 
 export namespace OGLWrap {
 

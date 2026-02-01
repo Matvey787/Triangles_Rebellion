@@ -1,7 +1,7 @@
 #include <iostream>
 #include <memory>
-#include "geo.hpp"
 
+import geo_lib;
 import OGLWrap;
 
 int main() {

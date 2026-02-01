@@ -60,7 +60,7 @@ set(OGL_LIB ogl_lib)
 add_library(${OGL_LIB})
 
 file(GLOB OGL_MODULES 
-    "${CMAKE_CURRENT_SOURCE_DIR}/details/*.cppm"
+    "${CMAKE_CURRENT_SOURCE_DIR}/details/oglwrap/*.cppm"
 )
 
 target_sources(${OGL_LIB}

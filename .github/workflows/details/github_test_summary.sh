@@ -29,7 +29,7 @@ for i in "${!ALL_TESTERS[@]}"; do
         BRANCH="${GITHUB_REF_NAME}"
         FULL_PATH="${REPO_URL}/tree/${BRANCH}/${tester_ref[PATH]}"
 
-        echo "${i}. [${tester_ref[NAME]}](${FULL_PATH})" >> "$GITHUB_STEP_SUMMARY"
+        echo "$((i+1)). [${tester_ref[NAME]}](${FULL_PATH})" >> "$GITHUB_STEP_SUMMARY"
     fi
 done
 echo "" >> $GITHUB_STEP_SUMMARY

@@ -3,8 +3,8 @@
 
 #include <iostream>
 #include <memory>
-#include "geo.hpp"
 
+import geo_lib;
 import OGLWrap;
 
 #include <iostream>
@@ -12,7 +12,6 @@ import OGLWrap;
 #include <sstream>
 #include <fstream>
 #include <algorithm>
-#include "geo.hpp"
 #include "bvh.hpp"
 
 std::vector<Geo::Triangle<float>> input_stdin();

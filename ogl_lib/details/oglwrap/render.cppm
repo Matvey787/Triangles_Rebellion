@@ -1,7 +1,5 @@
 module;
 
-#include "geo.hpp"
-
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
     
@@ -17,11 +15,14 @@ module;
 #include <typeindex>
 #include <cstring>
 
+
+
+export module render;
+
 import color;
 import camera;
 import input;
-
-export module render;
+import geo_lib;
 
 export namespace OGLWrap {
 
@@ -48,9 +49,9 @@ public:
             vertexes_.reserve(9);
             for (int i = 0; i < 3; ++i) {
                 const auto& point = triangle.getPoint(i);
-                vertexes_.push_back(point.x_);
-                vertexes_.push_back(point.y_);
-                vertexes_.push_back(point.z_);
+                vertexes_.push_back(point[0]);
+                vertexes_.push_back(point[1]);
+                vertexes_.push_back(point[2]);
             }
         }
 

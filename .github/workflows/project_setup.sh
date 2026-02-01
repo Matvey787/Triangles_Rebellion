@@ -29,7 +29,7 @@ ALL_TESTERS=("tester1" "tester2" "tester3" "tester4" "tester5")
 # Tester declaration 
 
 # !!!ATTENTION!!! All of the following parameters must be filled in. It is assumed that the tester 
-# is assembled and compiled relative to the tester folder.
+# is assembled and compiled relative to the same tester folder.
 
 # If the parameter says (support listing), you can specify a list in a string. Listing in a single 
 # line separated by spaces.
