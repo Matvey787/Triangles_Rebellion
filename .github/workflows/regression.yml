@@ -30,27 +30,5 @@ jobs:
 
           - name: Upload test summary
             if: always()
-            run: |
-              echo "## Test Summary" >> $GITHUB_STEP_SUMMARY
-              echo "" >> $GITHUB_STEP_SUMMARY
-              echo "**✅ Build completed successfully**" >> $GITHUB_STEP_SUMMARY
-              echo "" >> $GITHUB_STEP_SUMMARY
-              
-              if [ -f "tests/GEOLib/tester/build/test-results.xml" ]; then
-                  echo "**📊 GTest Results:**" >> $GITHUB_STEP_SUMMARY
+            run: ./.github/workflows/details/github_test_summary.sh
 
-                  tests=$(grep -o 'tests="[^"]*"' tests/GEOLib/tester/build/test-results.xml | head -1 | cut -d'"' -f2)
-                  FAILURES=$(grep -o 'failures="[^"]*"' tests/GEOLib/tester/build/test-results.xml | head -1 | cut -d'"' -f2)
-                  echo "- Total tests: $tests" >> $GITHUB_STEP_SUMMARY
-                  echo "- Failures: $FAILURES" >> $GITHUB_STEP_SUMMARY
-                  echo "" >> $GITHUB_STEP_SUMMARY
-              fi
-              
-              echo "**Build Info:**" >> $GITHUB_STEP_SUMMARY
-              echo "- Generator: Ninja" >> $GITHUB_STEP_SUMMARY
-              echo "- Compiler: clang++" >> $GITHUB_STEP_SUMMARY
-              echo "- Build type: Debug" >> $GITHUB_STEP_SUMMARY
-              echo "- GTest: ON" >> $GITHUB_STEP_SUMMARY
-              echo "- CTest: ON" >> $GITHUB_STEP_SUMMARY
-              echo "" >> $GITHUB_STEP_SUMMARY
-              echo "Finished at $(date)" >> $GITHUB_STEP_SUMMARY
